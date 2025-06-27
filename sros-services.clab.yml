@@ -131,7 +131,7 @@ topology:
     - endpoints: ["pe4:eth4", "p1:eth4"]
     # pe-ce links
     - endpoints: ["cea:eth1","pe1:eth10"]
-    - endpoints: ["cez:eth1","pe2:eth10"]
+    - endpoints: ["cez:eth1","pe3:eth10"]
     - endpoints: ["ceb:eth1","pe1:eth11"]
     - endpoints: ["ceb:eth2","pe2:eth11"]
     - endpoints: ["cey:eth1","pe3:eth11"]
