@@ -101,7 +101,6 @@ In this example, we are configuring the connector to use a 1x100G breakout.
 /configure port 1/1/c1 connector breakout c1-100g
 /configure port 1/1/c1/1 admin-state enable
 /configure port 1/1/c1/1 description "To P1"
-commit
 ```
 
 Below is an example of a client facing port configured as 'access' mode with dot1 encap.
