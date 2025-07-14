@@ -208,7 +208,7 @@ No. of BFD sessions: 1
 
 In this example, we are configuring a OSPFv2 neighbor. Port and interface configuration is similar to what is shown in previous section.
 
-For more details on OSPF configuration, visit [SR OS OSPF Documentation](https://documentation.nokia.com/sr/25-3/7750-sr/books/unicast-routing-protocols/ospf-unicast-routing-protocols.html).
+For more details on OSPF configuration, visit [SR OS OSPF Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/unicast-routing-protocols/ospf.html).
 
 ```
 /configure router "Base" ospf 0 admin-state enable
@@ -238,7 +238,7 @@ No. of Neighbors: 1
 
 In this example, we are configuring the router to be in IS-IS Level 1 and 2 (default). Port and interface configuration is similar to what is shown in previous section.
 
-For more details on IS-IS configuration, visit [SR OS IS-IS Documentation](https://documentation.nokia.com/sr/25-3/7750-sr/books/unicast-routing-protocols/is-is-unicast-routing-protocols.html).
+For more details on IS-IS configuration, visit [SR OS IS-IS Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/unicast-routing-protocols/is-is.html).
 
 ```
 /configure router "Base" isis 0 admin-state enable
@@ -271,7 +271,7 @@ Only PE1 and PE3 will participate in VPRN service.
 
 All 4 PEs will participate in EVPN-MPLS service.
 
-For more details on BGP configuration, visit [SR OS BGP Documentation](https://documentation.nokia.com/sr/25-3/7750-sr/books/unicast-routing-protocols/bgp-unicast-routing-protocols.html).
+For more details on BGP configuration, visit [SR OS BGP Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/unicast-routing-protocols/bgp.html).
 
 ```
 /configure router "Base" bgp router-id 10.10.10.1
@@ -324,6 +324,8 @@ Description
 ## LDP
 
 We will enable LDP to be used as a transport tunnel for services.
+
+For more details on LDP configuration, visit [SR OS LDP Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/mpls/label-distribution-protocol-mpls.html).
 
 ```
 /configure router "Base" ldp interface-parameters interface "To-P1" ipv4 admin-state enable
@@ -379,6 +381,8 @@ Flags: B = BGP or MPLS backup hop available
 ## RSVP-TE
 
 We will enable RSVP-TE to be used as a transport tunnel for services.
+
+For more details on RSVP configuration, visit [SR OS RSVP Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/mpls/mpls-rsvp.html).
 
 Configure RSVP-TE:
 
@@ -583,6 +587,8 @@ Flags: B = BGP or MPLS backup hop available
 
 In this example, we will configure SR-MPLS over ISIS (SR-ISIS). SR OS also supports SR-OSPF.
 
+For more details on SR-MPLS configuration, visit [SR OS SR Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/segment-routing-pce-user/segment-rout-with-mpls-data-plane-sr-mpls.html).
+
 Configure MPLS label range for Segment Routing:
 
 ```
@@ -629,6 +635,8 @@ Flags: B = BGP or MPLS backup hop available
 ## SR-TE
 
 Segment Routing - Traffic Engineering (SR-TE) can be used to build LSPs similar to RSVP-TE.
+
+For more details on SR-TE configuration, visit [SR OS SR-TE Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/segment-routing-pce-user/segment-rout-with-mpls-data-plane-sr-mpls.html#ai9ekdb660).
 
 In this example, we will configure a SR-TE LSP using loose hops in which case the IGP path will be selected.
 
@@ -708,7 +716,7 @@ Actual Hops      :
 
 ACL filter policies, also referred to as Access Control Lists (ACLs) or just ‟filters”, are sets of ordered rule entries specifying packet match criteria and actions to be performed to a packet upon a match. Filter policies are created with a unique filter ID and filter name. After the filter policy is created, the policy must then be associated with services.
 
-For more details on ACL, visit [SR OS ACL Documentation](https://documentation.nokia.com/aces/sr/25-3/7750-sr/books/router-configuration/filter-policies-router-configuration.html).
+For more details on ACL, visit [SR OS ACL Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/router-configuration/filter-policies-router-configuration.html).
 
 Refer to the section for each service type for examples on applying ACL to that service type.
 
@@ -1037,6 +1045,8 @@ Number of SDPs : 2
 
 An Epipe service is a Layer 2 point-to-point service where the customer data is encapsulated and transported across a service provider IP or MPLS network. An Epipe service is completely transparent to the customer data and protocols. The Epipe service does not perform any MAC learning. A local Epipe service consists of two SAPs on the same node, whereas a distributed Epipe service consists of two SAPs on different nodes. SDPs are not used in local Epipe services.
 
+For more details on Epipe, visit [SR OS Epipe Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/vll-services.html#ai9emdyvq8).
+
 The epipe topology for this example is shown below:
 
 ![image](epipe-topology.jpg)
@@ -1237,17 +1247,46 @@ rtt min/avg/max/mdev = 5.030/6.805/10.316/2.482 ms
 
 # VPLS
 
+VPLS is a class of virtual private network service that allows the connection of multiple sites in a single bridged domain over a provider-managed IP/MPLS network. The customer sites in a VPLS instance appear to be on the same LAN, regardless of their location. VPLS uses an Ethernet interface on the customer-facing (access) side, which simplifies the LAN/WAN boundary and allows for rapid and flexible service provisioning.
+
+A VPLS service provides connectivity between two or more SAPs on one (which is considered a local service) or more (which is considered a distributed service) service routers. The connection appears to be a bridged domain to the customer sites so protocols, including routing protocols, can traverse the VPLS service.
+
+For more details on VPLS, visit [SR OS VPLS Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/virtual-private-lan-service.html).
 
 
 # VPRN
 
+VPRN (commonly called VRF) is a method of distributing routing information using BGP and MPLS forwarding data to provide a Layer 3 Virtual Private Network (VPN) service to end customers
+
+Each Virtual Private Routed Network (VPRN) consists of a set of customer sites connected to one or more PE routers. Each associated PE router maintains a separate IP forwarding table for each VPRN. Additionally, the PE routers exchange the routing information configured or learned from all customer sites via MP-BGP peering. Each route exchanged via the MP-BGP protocol includes a Route Distinguisher (RD), which identifies the VPRN association and handles the possibility of IP address overlap.
+
+For more details on VPRN, visit [SR OS VPRN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/vprn-service.html).
+
 
 # IES
 
+IES is a routed connectivity service where the subscriber communicates with an IP router interface to send and receive Internet traffic. An IES has one or more logical IP routing interfaces, each with a SAP that acts as the access point to the subscriber network.
+
+IES allows IP interfaces to participate in the same routing instance used for service network core routing connectivity. 
+
+For more details on IES, visit [SR OS IES Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/internet-enhanced-service.html).
 
 
 # EVPN-VPWS
 
+EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
+
+EVPN-VPWS provides Epipe point-to-point services.
+
+For more details on EVPN-VPWS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
 
 
 # EVPN-VPLS with Multihoming
+
+EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
+
+EVPN-MPLS is supported where PEs are connected by any type of MPLS tunnel. EVPN-MPLS is generally used as an evolution for VPLS services in the WAN, and Data Center Interconnect is one of the main applications.
+
+EVPN can be used in MPLS networks where PEs are interconnected through any type of tunnel, including RSVP-TE, Segment-Routing TE, LDP, BGP, Segment Routing IS-IS, Segment Routing OSPF, RIB-API, MPLS-forwarding-policy, SR-Policy, or MPLSoUDP. 
+
+For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
