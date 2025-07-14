@@ -1002,7 +1002,7 @@ In this example, we are creating a SDP to PE3 that will use LDP.
 /configure service sdp 55 far-end ip-address 10.10.10.3
 ```
 
-The association of the service with the SDP is done under the service context. The SDP id is used along with a unique `vc-id` which is used as the service label in the MPLS encapsulation of the customer packet.
+The association of the service with the SDP is done under the service context. The SDP id is used along with a unique `vc-id` which is used to identify the service on the remote end. A MPLS label is generated for each unique `vc-id` and is used as the service label in MPLS encapsulation.
 
 ```
 /configure service epipe "CEA1-VLAN100" spoke-sdp 55:100
