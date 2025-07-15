@@ -799,13 +799,13 @@ For more details on QoS implementation, visit [SR OS QoS Documentation](https://
 At Service Ingress, Classification is configured in a `sap-ingress` policy.
 
 ```
-/configure qos sap-ingress "Epipe-ingress-QoS" dscp cs1 fc "af"
+/configure qos sap-ingress "CE-ingress-QoS" dscp cs1 fc "af"
 ```
 
 The `sap-ingress` policy is applied to the service SAP.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "Epipe-ingress-QoS"
+/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
 ```
 
 At Network Ingress, Classification is configured in a `network` policy.
@@ -831,27 +831,27 @@ Refer to the section for each service type for examples on applying QoS classifi
 At Service Ingress, Queuing is configured in a `sap-ingress` policy.
 
 ```
-/configure qos sap-ingress "Epipe-ingress-QoS" policy-id 11
-/configure qos sap-ingress "Epipe-ingress-QoS" queue 2 rate pir 100
-/configure qos sap-ingress "Epipe-ingress-QoS" queue 2 rate cir 100
-/configure qos sap-ingress "Epipe-ingress-QoS" fc "af" queue 2
-/configure qos sap-ingress "Epipe-ingress-QoS" fc "af" profile in
+/configure qos sap-ingress "CE-ingress-QoS" policy-id 11
+/configure qos sap-ingress "CE-ingress-QoS" queue 2 rate pir 100
+/configure qos sap-ingress "CE-ingress-QoS" queue 2 rate cir 100
+/configure qos sap-ingress "CE-ingress-QoS" fc "af" queue 2
+/configure qos sap-ingress "CE-ingress-QoS" fc "af" profile in
 ```
 
 At Service Egress, Queuing is configured in a `sap-egress` policy.
 
 ```
-/configure qos sap-egress "Epipe-egress-QoS" policy-id 12
-/configure qos sap-egress "Epipe-egress-QoS" queue 3 rate pir 100
-/configure qos sap-egress "Epipe-egress-QoS" queue 3 rate cir 100
-/configure qos sap-egress "Epipe-egress-QoS" fc be queue 3
+/configure qos sap-egress "CE-egress-QoS" policy-id 12
+/configure qos sap-egress "CE-egress-QoS" queue 3 rate pir 100
+/configure qos sap-egress "CE-egress-QoS" queue 3 rate cir 100
+/configure qos sap-egress "CE-egress-QoS" fc be queue 3
 ```
 
 Both `sap-ingress` and `sap-egress` policies are applied under the service SAP.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "Epipe-ingress-QoS"
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "Epipe-egress-QoS"
+/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
 At Network Ingress and Egress, Queuing is configured in a `network-queue` policy.
@@ -906,16 +906,16 @@ The port based scheduler policy is applied to the physical port.
 At Service Egress, remarking is configured in the `sap-egress` policy.
 
 ```
-/configure qos sap-egress "Epipe-egress-QoS" fc be dscp in-profile cp31
-/configure qos sap-egress "Epipe-egress-QoS" fc be dscp out-profile cp31
-/configure qos sap-egress "Epipe-egress-QoS" fc af dscp in-profile cs4
-/configure qos sap-egress "Epipe-egress-QoS" fc af dscp out-profile cs4
+/configure qos sap-egress "CE-egress-QoS" fc be dscp in-profile cp31
+/configure qos sap-egress "CE-egress-QoS" fc be dscp out-profile cp31
+/configure qos sap-egress "CE-egress-QoS" fc af dscp in-profile cs4
+/configure qos sap-egress "CE-egress-QoS" fc af dscp out-profile cs4
 ```
 
 The `sap-egress` policy is applied under the service SAP context.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "Epipe-egress-QoS"
+/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
 At Network Egress, remarking is configured in the `network` policy.
@@ -1093,26 +1093,26 @@ ACL configuration on PE1:
 SAP Ingress QoS configuration on PE1:
 
 ```
-/configure qos sap-ingress "Epipe-ingress-QoS" policy-id 11
-/configure qos sap-ingress "Epipe-ingress-QoS" queue 2 rate pir 100
-/configure qos sap-ingress "Epipe-ingress-QoS" queue 2 rate cir 100
-/configure qos sap-ingress "Epipe-ingress-QoS" dscp cs1 fc "af"
-/configure qos sap-ingress "Epipe-ingress-QoS" fc "af" queue 2
-/configure qos sap-ingress "Epipe-ingress-QoS" fc "af" profile in
+/configure qos sap-ingress "CE-ingress-QoS" policy-id 11
+/configure qos sap-ingress "CE-ingress-QoS" queue 2 rate pir 100
+/configure qos sap-ingress "CE-ingress-QoS" queue 2 rate cir 100
+/configure qos sap-ingress "CE-ingress-QoS" dscp cs1 fc "af"
+/configure qos sap-ingress "CE-ingress-QoS" fc "af" queue 2
+/configure qos sap-ingress "CE-ingress-QoS" fc "af" profile in
 ```
 
 SAP Egress QoS configuration on PE1:
 
 ```
-/configure qos sap-egress "Epipe-egress-QoS" policy-id 12
-/configure qos sap-egress "Epipe-egress-QoS" queue 3 rate pir 100
-/configure qos sap-egress "Epipe-egress-QoS" queue 3 rate cir 100
-/configure qos sap-egress "Epipe-egress-QoS" fc be queue 3
-/configure qos sap-egress "Epipe-egress-QoS" fc be dscp in-profile cp31
-/configure qos sap-egress "Epipe-egress-QoS" fc be dscp out-profile cp31
-/configure qos sap-egress "Epipe-egress-QoS" fc af queue 3
-/configure qos sap-egress "Epipe-egress-QoS" fc af dscp in-profile cs4
-/configure qos sap-egress "Epipe-egress-QoS" fc af dscp out-profile cs4
+/configure qos sap-egress "CE-egress-QoS" policy-id 12
+/configure qos sap-egress "CE-egress-QoS" queue 3 rate pir 100
+/configure qos sap-egress "CE-egress-QoS" queue 3 rate cir 100
+/configure qos sap-egress "CE-egress-QoS" fc be queue 3
+/configure qos sap-egress "CE-egress-QoS" fc be dscp in-profile cp31
+/configure qos sap-egress "CE-egress-QoS" fc be dscp out-profile cp31
+/configure qos sap-egress "CE-egress-QoS" fc af queue 3
+/configure qos sap-egress "CE-egress-QoS" fc af dscp in-profile cs4
+/configure qos sap-egress "CE-egress-QoS" fc af dscp out-profile cs4
 ```
 
 Epipe configuration on PE1:
@@ -1123,12 +1123,226 @@ Epipe configuration on PE1:
 /configure service epipe "CEA1-VLAN100" service-id 10
 /configure service epipe "CEA1-VLAN100" customer "1"
 /configure service epipe "CEA1-VLAN100" spoke-sdp 55:100 { }
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "Epipe-ingress-QoS"
+/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
 /configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress filter ip "Epipe-ACL"
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "Epipe-egress-QoS"
+/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
-Verify Epipe status:
+Refer to ACL and QoS sections in this guide for the respective ACL and QoS configuration.
+
+**Customer Verfiication**
+
+Login to CEA:
+
+```
+docker exec -it cea bash
+```
+
+Ping CEZ VLAN 100 from CEA:
+
+```
+└──> ping -c 100 -Q 34  192.168.10.2
+PING 192.168.10.2 (192.168.10.2) 56(84) bytes of data.
+64 bytes from 192.168.10.2: icmp_seq=1 ttl=64 time=10.3 ms
+64 bytes from 192.168.10.2: icmp_seq=2 ttl=64 time=5.03 ms
+64 bytes from 192.168.10.2: icmp_seq=3 ttl=64 time=5.07 ms
+
+--- 192.168.10.2 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 5.030/6.805/10.316/2.482 ms
+```
+
+While ping is in progress, check the SAP, ACL and QoS stats.
+
+Refer to the `Common show commands` section in this guide for relevant commands.
+
+# VPLS
+
+VPLS is a class of virtual private network service that allows the connection of multiple sites in a single bridged domain over a provider-managed IP/MPLS network. The customer sites in a VPLS instance appear to be on the same LAN, regardless of their location. VPLS uses an Ethernet interface on the customer-facing (access) side, which simplifies the LAN/WAN boundary and allows for rapid and flexible service provisioning.
+
+A VPLS service provides connectivity between two or more SAPs on one (which is considered a local service) or more (which is considered a distributed service) service routers. The connection appears to be a bridged domain to the customer sites so protocols, including routing protocols, can traverse the VPLS service.
+
+For more details on VPLS, visit [SR OS VPLS Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/virtual-private-lan-service.html).
+
+
+# VPRN
+
+VPRN (commonly called VRF) is a method of distributing routing information using BGP and MPLS forwarding data to provide a Layer 3 Virtual Private Network (VPN) service to end customers
+
+Each Virtual Private Routed Network (VPRN) consists of a set of customer sites connected to one or more PE routers. Each associated PE router maintains a separate IP forwarding table for each VPRN. Additionally, the PE routers exchange the routing information configured or learned from all customer sites via MP-BGP peering. Each route exchanged via the MP-BGP protocol includes a Route Distinguisher (RD), which identifies the VPRN association and handles the possibility of IP address overlap.
+
+For more details on VPRN, visit [SR OS VPRN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/vprn-service.html).
+
+
+The vprn topology for this example is shown below:
+
+![image](vprn-topology.jpg)
+
+**Configuration**
+
+CE facing Port configuration on PE1 and PE3:
+
+```
+/configure port 1/1/c10/1 admin-state enable
+/configure port 1/1/c10/1 ethernet mode access
+/configure port 1/1/c10/1 ethernet encap-type dot1q
+/configure port 1/1/c10/1 ethernet mtu 5000
+```
+
+BGP configuration on PE1 to advertise vpn-ipv4 family to PE3:
+
+```
+/configure router "Base" bgp router-id 10.10.10.1
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.3" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.3" family vpn-ipv4 true
+```
+
+BGP configuration on PE3 to advertise vpn-ipv4 family to PE1:
+
+```
+/configure router "Base" bgp router-id 10.10.10.3
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.1" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.1" family vpn-ipv4 true
+```
+
+Verify BGP state on PE1:
+
+```
+A:admin@pe1#  show router bgp summary 
+===============================================================================
+ BGP Router ID:10.10.10.1       AS:64500       Local AS:64500      
+===============================================================================
+BGP Admin State         : Up          BGP Oper State              : Up
+Total Peer Groups       : 1           Total Peers                 : 3         
+Total VPN Peer Groups   : 0           Total VPN Peers             : 0         
+Current Internal Groups : 2           Max Internal Groups         : 2         
+Total BGP Paths         : 27          Total Path Memory           : 10032     
+<--snip-->   
+===============================================================================
+BGP Summary
+===============================================================================
+Legend : D - Dynamic Neighbor
+===============================================================================
+Neighbor
+Description
+                   AS PktRcvd InQ  Up/Down   State|Rcv/Act/Sent (Addr Family)
+                      PktSent OutQ
+-------------------------------------------------------------------------------       
+10.10.10.3
+                64500      87    0 00h40m35s 0/0/0 (VpnIPv4)
+-------------------------------------------------------------------------------
+```
+
+VPRN ACL configuration on PE1:
+
+```
+/configure filter ip-filter "VPRN-ACL" filter-id 103
+/configure filter ip-filter "VPRN-ACL" entry 10 match protocol icmp
+/configure filter ip-filter "VPRN-ACL" entry 10 match dst-ip address 192.168.31.1
+/configure filter ip-filter "VPRN-ACL" entry 10 match dst-ip mask 255.255.255.255
+/configure filter ip-filter "VPRN-ACL" entry 10 action accept
+```
+
+VPRN service configuration on PE1:
+
+```
+/configure service vprn "RED" admin-state enable
+/configure service vprn "RED" service-id 30
+/configure service vprn "RED" customer "1"
+/configure service vprn "RED" autonomous-system 64555
+/configure service vprn "RED" bgp-ipvpn mpls admin-state enable
+/configure service vprn "RED" bgp-ipvpn mpls route-distinguisher "10.10.10.1:64555"
+/configure service vprn "RED" bgp-ipvpn mpls vrf-target import-community "target:64555:30"
+/configure service vprn "RED" bgp-ipvpn mpls vrf-target export-community "target:64555:30"
+/configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution filter
+/configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution-filter sr-isis true
+/configure service vprn "RED" interface "to-cea" ipv4 primary address 192.168.30.254
+/configure service vprn "RED" interface "to-cea" ipv4 primary prefix-length 24
+/configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 ingress filter ip "VPRN-ACL"
+/configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 egress qos sap-egress policy-name "CE-egress-QoS"
+```
+
+Refer to the QoS section for QoS policy configuration.
+
+VPRN service configuration on PE3:
+
+```
+/configure service vprn "RED" admin-state enable
+/configure service vprn "RED" service-id 30
+/configure service vprn "RED" customer "1"
+/configure service vprn "RED" autonomous-system 64555
+/configure service vprn "RED" bgp-ipvpn mpls admin-state enable
+/configure service vprn "RED" bgp-ipvpn mpls route-distinguisher "10.10.10.3:64555"
+/configure service vprn "RED" bgp-ipvpn mpls vrf-target import-community "target:64555:30"
+/configure service vprn "RED" bgp-ipvpn mpls vrf-target export-community "target:64555:30"
+/configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution filter
+/configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution-filter sr-isis true
+/configure service vprn "RED" interface "to-cez" ipv4 primary address 192.168.31.254
+/configure service vprn "RED" interface "to-cez" ipv4 primary prefix-length 24
+/configure service vprn "RED" interface "to-cez" { sap 1/1/c10/1:300 }
+```
+
+**Customer Verfiication**
+
+Login to CEA:
+
+```
+docker exec -it cea bash
+```
+
+Ping CEZ VLAN 300 from CEA:
+
+```
+└──> ping -c 100 -Q 34  192.168.31.1
+PING 192.168.31.1 (192.168.31.1) 56(84) bytes of data.
+64 bytes from 192.168.31.1: icmp_seq=1 ttl=62 time=9.81 ms
+64 bytes from 192.168.31.1: icmp_seq=2 ttl=62 time=5.93 ms
+64 bytes from 192.168.31.1: icmp_seq=3 ttl=62 time=6.45 ms
+
+--- 192.168.31.1 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 99151ms
+rtt min/avg/max/mdev = 4.360/6.300/14.803/2.373 ms
+```
+
+While ping is in progress, check the SAP, ACL and QoS stats.
+
+Refer to the `Common show commands` section in this guide for relevant commands.
+
+# IES
+
+IES is a routed connectivity service where the subscriber communicates with an IP router interface to send and receive Internet traffic. An IES has one or more logical IP routing interfaces, each with a SAP that acts as the access point to the subscriber network.
+
+IES allows IP interfaces to participate in the same routing instance used for service network core routing connectivity. 
+
+For more details on IES, visit [SR OS IES Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/internet-enhanced-service.html).
+
+
+
+# EVPN-VPWS
+
+EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
+
+EVPN-VPWS provides Epipe point-to-point services.
+
+For more details on EVPN-VPWS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
+
+
+# EVPN-VPLS with Multihoming
+
+EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
+
+EVPN-MPLS is supported where PEs are connected by any type of MPLS tunnel. EVPN-MPLS is generally used as an evolution for VPLS services in the WAN, and Data Center Interconnect is one of the main applications.
+
+EVPN can be used in MPLS networks where PEs are interconnected through any type of tunnel, including RSVP-TE, Segment-Routing TE, LDP, BGP, Segment Routing IS-IS, Segment Routing OSPF, RIB-API, MPLS-forwarding-policy, SR-Policy, or MPLSoUDP. 
+
+For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
+
+# Common Show commands
+
+**Service Status**
 
 ```
 A:admin@pe1# show service id "CEA1-VLAN100" base
@@ -1142,8 +1356,8 @@ MACSec enabled    : no
 Name              : CEA1-VLAN100
 Description       : Epipe-CEA1-VLAN100-CEZ1-VLAN100
 Customer Id       : 1                   Creation Origin   : manual
-Last Status Change: 06/27/2025 21:16:51 
-Last Mgmt Change  : 06/27/2025 20:44:01 
+Last Status Change: 07/15/2025 19:48:09 
+Last Mgmt Change  : 07/15/2025 19:47:39 
 Test Service      : No                  
 Admin State       : Up                  Oper State        : Up
 MTU               : 1514                
@@ -1166,16 +1380,10 @@ sdp:55:100 S(10.10.10.3)                 Spok         0       8682    Up   Up
 ===============================================================================
 ```
 
-To verify details of all service components:
+**Service SAP Details**
 
 ```
-A:admin@pe1# show service id "CEA1-VLAN100" all 
-```
-
-To verify SAP queue stats:
-
-```
-A:admin@pe1# show service id "CEA1-VLAN100" sap "1/1/c10/1:100" stats 
+A:admin@pe1# show service id "CEA1-VLAN100" sap "1/1/c10/1:100" detail 
 
 ===============================================================================
 Service Access Points(SAP)
@@ -1186,8 +1394,106 @@ Description        : (Not Specified)
 Admin State        : Up                       Oper State        : Up
 Flags              : None
 Multi Svc Site     : None                     
-Last Status Change : 06/27/2025 20:18:14      
-Last Mgmt Change   : 06/27/2025 21:00:16      
+Last Status Change : 07/15/2025 19:47:54      
+Last Mgmt Change   : 07/15/2025 19:57:23      
+Sub Type           : regular                  
+Dot1Q Ethertype    : 0x8100                   QinQ Ethertype    : 0x8100
+Split Horizon Group: (Not Specified)
+ 
+Admin MTU          : 5000                     Oper MTU          : 5000
+Ingr IP Fltr-Id    : 101                      Egr IP Fltr-Id    : n/a
+Ingr Mac Fltr-Id   : n/a                      Egr Mac Fltr-Id   : n/a
+Ingr IPv6 Fltr-Id  : n/a                      Egr IPv6 Fltr-Id  : n/a
+qinq-pbit-marking  : both                     
+Endpoint           : N/A                      
+Egr Agg Rate Limit : max                      
+Q Frame-Based Acct : Disabled                 Limit Unused BW   : Disabled
+Vlan-translation   : None                     
+Qinq-vlan-                                    Qinq-vlan-          
+translation        : None                     translation Ids   : None
+ 
+Acct. Pol          : None                     Collect Stats     : Disabled
+ 
+Application Profile: None                     
+Transit Policy     : None                     
+ 
+Oper Group         : (none)                   Monitor Oper Grp  : (none)
+Host Lockout Plcy  : n/a                      
+Ignore Oper Down   : Disabled                 
+Lag Link Map Prof  : (none)                   
+Cflowd             : Disabled                 
+Bandwidth          : Not-Applicable           
+Oper DCpu Prot Pol : _default-access-policy
+Virtual Port       : (Not Specified)
+
+-------------------------------------------------------------------------------
+ETH-CFM SAP specifics
+-------------------------------------------------------------------------------
+Tunnel Faults      : n/a                      AIS               : Disabled
+MC Prop-Hold-Timer : n/a                      
+Squelch Levels     : None                     
+Squelch Ctag Levels: None                     
+Collect Lmm Stats  : Disabled                 
+LMM FC Stats       : None                     
+LMM FC In Prof     : None                     
+ 
+-------------------------------------------------------------------------------
+QOS
+-------------------------------------------------------------------------------
+Ingress qos-policy : 11                       Egress qos-policy : 12
+Ingress FP QGrp    : (none)                   Egress Port QGrp  : (none)
+Ing FP QGrp Inst   : (none)                   Egr Port QGrp Inst: (none)
+Ing ip-match tag   : none                     Ing ipv6-match tag: none
+I. Sched Pol       : (Not Specified)
+E. Sched Pol       : (Not Specified)
+I. Policer Ctl Pol : (Not Specified)
+E. Policer Ctl Pol : (Not Specified)
+I. QGrp Redir. List: (Not Specified)
+E. QGrp Redir. List: (Not Specified)
+Hw Agg Shaper Q Set: No                       
+Hw Agg Shpr QSet Sz: 0                        
+Hw Agg Shpr In-Use : No                       
+Latency Budget     : 0 us                     
+
+-------------------------------------------------------------------------------
+Sap Aggregate Stats
+-------------------------------------------------------------------------------
+                        Packets                 Octets
+Ingress
+Aggregate Offered     : 509                     51742                   
+Aggregate Forwarded   : 509                     51742                   
+Aggregate Dropped     : 0                       0                       
+
+Egress
+Aggregate Forwarded   : 509                     52260                   
+Aggregate Dropped     : 0                       0                       
+-------------------------------------------------------------------------------
+Sap Statistics
+-------------------------------------------------------------------------------
+Last Cleared Time     : N/A
+
+                        Packets                 Octets
+CPM Ingress           : 0                       0                        
+
+Forwarding Engine Stats
+Dropped               : 0                       0                        
+Received Valid        : 509                     51742                    
+Off. HiPrio           : 0                       0                        
+Off. LowPrio          : 509                     51742                    
+Off. Uncolor          : 0                       0                        
+Off. Managed          : 0                       0                        
+
+Queueing Stats(Ingress QoS Policy 11)
+Dro. HiPrio           : 0                       0                        
+Dro. LowPrio          : 0                       0                        
+For. InProf           : 0                       0                        
+For. OutProf          : 509                     51742                    
+
+Queueing Stats(Egress QoS Policy 12)
+Dro. In/InplusProf    : 0                       0                        
+Dro. Out/ExcProf      : 0                       0                        
+For. In/InplusProf    : 0                       0                        
+For. Out/ExcProf      : 509                     52260                    
 -------------------------------------------------------------------------------
 Sap per Queue stats
 -------------------------------------------------------------------------------
@@ -1195,98 +1501,187 @@ Sap per Queue stats
  
 Ingress Queue 1 (Unicast) (Priority)
 Off. HiPrio           : 0                       0                        
-Off. LowPrio          : 431                     32806                    
+Off. LowPrio          : 39                      2006                     
 Dro. HiPrio           : 0                       0                        
 Dro. LowPrio          : 0                       0                        
 For. InProf           : 0                       0                        
-For. OutProf          : 431                     32806                    
+For. OutProf          : 39                      2006                     
  
 Ingress Queue 2 (Unicast) (Priority)
 Off. HiPrio           : 0                       0                        
-Off. LowPrio          : 383                     40598                    
+Off. LowPrio          : 467                     49502                    
 Dro. HiPrio           : 0                       0                        
 Dro. LowPrio          : 0                       0                        
 For. InProf           : 0                       0                        
-For. OutProf          : 383                     40598                    
+For. OutProf          : 467                     49502                    
  
 Egress Queue 1
 For. In/InplusProf    : 0                       0                        
-For. Out/ExcProf      : 82                      8020                     
+For. Out/ExcProf      : 0                       0                        
 Dro. In/InplusProf    : 0                       0                        
 Dro. Out/ExcProf      : 0                       0                        
  
 Egress Queue 3
 For. In/InplusProf    : 0                       0                        
-For. Out/ExcProf      : 648                     57236                    
+For. Out/ExcProf      : 506                     52026                    
 Dro. In/InplusProf    : 0                       0                        
 Dro. Out/ExcProf      : 0                       0                        
 ===============================================================================
 ```
 
-**Customer Verfiication**
-
-Login to CEA:
+**Service SDP details**
 
 ```
-docker exec -it cea bash
+A:admin@pe1# show service id "CEA1-VLAN100" sdp "55:100" detail 
+
+===============================================================================
+Service Destination Point (Sdp Id : 55:100) Details
+===============================================================================
+-------------------------------------------------------------------------------
+ Sdp Id 55:100  -(10.10.10.3)
+-------------------------------------------------------------------------------
+Description     : (Not Specified)
+SDP Id             : 55:100                   Type              : Spoke
+Spoke Descr     : (Not Specified)
+VC Type            : Ether                    VC Tag            : n/a
+Admin Path MTU     : 0                        Oper Path MTU     : 8682
+Delivery           : MPLS                     
+Far End            : 10.10.10.3               Tunnel Far End    : 
+Oper Tunnel Far End: 10.10.10.3               
+LSP Types          : LDP                      
+Hash Label         : Disabled                 Hash Lbl Sig Cap  : Disabled
+Oper Hash Label    : Disabled                 
+Entropy Label      : Disabled                 
+ 
+Admin State        : Up                       Oper State        : Up
+MinReqd SdpOperMTU : 1514                     
+ADV Service MTU    : None                     
+Acct. Pol          : None                     Collect Stats     : Disabled
+Ingress Label      : 524280                   Egress Label      : 524283
+Ingr Mac Fltr-Id   : n/a                      Egr Mac Fltr-Id   : n/a
+Ingr IP Fltr-Id    : n/a                      Egr IP Fltr-Id    : n/a
+Ingr IPv6 Fltr-Id  : n/a                      Egr IPv6 Fltr-Id  : n/a
+Admin ControlWord  : Not Preferred            Oper ControlWord  : False
+Admin BW(Kbps)     : 0                        Oper BW(Kbps)     : 0
+BFD Template       : None
+BFD-Enabled        : no                       BFD-Encap         : ipv4
+BFD Fail Action    : none                     BFD Oper State    : notConfigured
+BFD WaitForUpTimer : 0 secs                   
+BFD Time Remain    : 0 secs                   
+Last Status Change : 07/15/2025 19:48:09      Signaling         : TLDP
+Last Mgmt Change   : 07/15/2025 19:47:39      
+Endpoint           : N/A                      Precedence        : 4
+ICB                : False                    
+PW Status Sig      : Enabled                  
+Force Vlan-Vc      : Disabled                 Force Qinq-Vc     : none
+Class Fwding State : Down                     
+Flags              : None
+Local Pw Bits      : None
+Peer Pw Bits       : None
+Peer Fault Ip      : None                     
+Peer Vccv CV Bits  : lspPing bfdFaultDet
+Peer Vccv CC Bits  : mplsRouterAlertLabel
+ 
+Application Profile: None                     
+Transit Policy     : None                     
+Standby Sig Slave  : False                    
+Block On Peer Fault: False                    
+Use SDP B-MAC      : False                    
+
+Ingress Qos Policy : (none)                   Egress Qos Policy : (none)
+Ingress FP QGrp    : (none)                   Egress Port QGrp  : (none)
+Ing FP QGrp Inst   : (none)                   Egr Port QGrp Inst: (none)
+ 
+KeepAlive Information :
+Admin State        : Disabled                 Oper State        : Disabled
+Hello Time         : 10                       Hello Msg Len     : 0
+Max Drop Count     : 3                        Hold Down Time    : 10
+ 
+Statistics            :
+I. Fwd. Pkts.      : 509                      I. Dro. Pkts.     : 0
+I. Fwd. Octs.      : 47670                    I. Dro. Octs.     : 0
+E. Fwd. Pkts.      : 509                      E. Fwd. Octets    : 47670
+
+-------------------------------------------------------------------------------
+Control Channel Status
+-------------------------------------------------------------------------------
+PW Status          : disabled                 Refresh Timer     : <none>
+Peer Status Expire : false                    
+Request Timer      : <none>                   
+Acknowledgement    : false                    
+
+-------------------------------------------------------------------------------
+ETH-CFM SDP-Bind specifics
+-------------------------------------------------------------------------------
+Squelch Levels     : None                     
+Squelch Ctag Levels: None                     
+Collect Lmm Stats  : Disabled                 
+LMM FC Stats       : None                     
+LMM FC In Prof     : None                     
+ 
+-------------------------------------------------------------------------------
+LDP Information :
+-------------------------------------------------------------------------------
+LDP LSP Id         : 65541                    
+ 
+-------------------------------------------------------------------------------
+RSVP/Static LSPs
+-------------------------------------------------------------------------------
+Associated LSP List :
+No LSPs Associated
+ 
+-------------------------------------------------------------------------------
+Class-based forwarding :
+-------------------------------------------------------------------------------
+Class forwarding   : Disabled                 EnforceDSTELspFc  : Disabled
+Default LSP        : Uknwn                    
+Multicast LSP      : None                     
+
+===============================================================================
+FC Mapping Table
+===============================================================================
+FC Name             LSP Name
+-------------------------------------------------------------------------------
+No FC Mappings
+ 
+-------------------------------------------------------------------------------
+Segment Routing
+-------------------------------------------------------------------------------
+ISIS               : disabled                 
+OSPF               : disabled                 
+TE-LSP             : disabled                 
+-------------------------------------------------------------------------------
+Number of SDPs : 1
+-------------------------------------------------------------------------------
+===============================================================================
 ```
 
-Ping CEZ VLAN 100 from CEA:
+**ACL Stats**
 
 ```
-└──> ping -c 3 192.168.10.2
-PING 192.168.10.2 (192.168.10.2) 56(84) bytes of data.
-64 bytes from 192.168.10.2: icmp_seq=1 ttl=64 time=10.3 ms
-64 bytes from 192.168.10.2: icmp_seq=2 ttl=64 time=5.03 ms
-64 bytes from 192.168.10.2: icmp_seq=3 ttl=64 time=5.07 ms
+A:admin@pe1# show filter ip "Epipe-ACL" counters 
 
---- 192.168.10.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-rtt min/avg/max/mdev = 5.030/6.805/10.316/2.482 ms
+===============================================================================
+IP Filter
+===============================================================================
+Filter Id           : 101                          Applied        : Yes
+Scope               : Template                     Def. Action    : Drop
+Type                : Normal                       
+Shared Policer      : Off                          
+System filter       : Unchained                    
+Radius Ins Pt       : n/a                          
+CrCtl. Ins Pt       : n/a                          
+RadSh. Ins Pt       : n/a                          
+PccRl. Ins Pt       : n/a                          
+Entries             : 1                            
+Description         : (Not Specified)
+Filter Name         : Epipe-ACL
+-------------------------------------------------------------------------------
+Filter Match Criteria : IP
+-------------------------------------------------------------------------------
+Entry               : 10
+Ing. Matches        : 467 pkts (49502 bytes)
+Egr. Matches        : 0 pkts
+ 
+===============================================================================
 ```
-
-# VPLS
-
-VPLS is a class of virtual private network service that allows the connection of multiple sites in a single bridged domain over a provider-managed IP/MPLS network. The customer sites in a VPLS instance appear to be on the same LAN, regardless of their location. VPLS uses an Ethernet interface on the customer-facing (access) side, which simplifies the LAN/WAN boundary and allows for rapid and flexible service provisioning.
-
-A VPLS service provides connectivity between two or more SAPs on one (which is considered a local service) or more (which is considered a distributed service) service routers. The connection appears to be a bridged domain to the customer sites so protocols, including routing protocols, can traverse the VPLS service.
-
-For more details on VPLS, visit [SR OS VPLS Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/virtual-private-lan-service.html).
-
-
-# VPRN
-
-VPRN (commonly called VRF) is a method of distributing routing information using BGP and MPLS forwarding data to provide a Layer 3 Virtual Private Network (VPN) service to end customers
-
-Each Virtual Private Routed Network (VPRN) consists of a set of customer sites connected to one or more PE routers. Each associated PE router maintains a separate IP forwarding table for each VPRN. Additionally, the PE routers exchange the routing information configured or learned from all customer sites via MP-BGP peering. Each route exchanged via the MP-BGP protocol includes a Route Distinguisher (RD), which identifies the VPRN association and handles the possibility of IP address overlap.
-
-For more details on VPRN, visit [SR OS VPRN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/vprn-service.html).
-
-
-# IES
-
-IES is a routed connectivity service where the subscriber communicates with an IP router interface to send and receive Internet traffic. An IES has one or more logical IP routing interfaces, each with a SAP that acts as the access point to the subscriber network.
-
-IES allows IP interfaces to participate in the same routing instance used for service network core routing connectivity. 
-
-For more details on IES, visit [SR OS IES Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/internet-enhanced-service.html).
-
-
-# EVPN-VPWS
-
-EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
-
-EVPN-VPWS provides Epipe point-to-point services.
-
-For more details on EVPN-VPWS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
-
-
-# EVPN-VPLS with Multihoming
-
-EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
-
-EVPN-MPLS is supported where PEs are connected by any type of MPLS tunnel. EVPN-MPLS is generally used as an evolution for VPLS services in the WAN, and Data Center Interconnect is one of the main applications.
-
-EVPN can be used in MPLS networks where PEs are interconnected through any type of tunnel, including RSVP-TE, Segment-Routing TE, LDP, BGP, Segment Routing IS-IS, Segment Routing OSPF, RIB-API, MPLS-forwarding-policy, SR-Policy, or MPLSoUDP. 
-
-For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
