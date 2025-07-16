@@ -27,6 +27,25 @@ All configuration examples are shown for a single PE router. Refer to the startu
 
 ![image](/sros-topology.png)
 
+# MD-CLI Command Reference
+
+Here's a reference table with some commonly used commands.
+
+| Action | Command |
+| --- | --- |
+| Enter Candidate mode | `configure private` |
+| Commit configuration changes | `commit` |
+| Delete configuration elements | `delete {command path}` |
+| Discard configuration changes | `discard` |
+| Compare candidate to running | `compare /` |
+| View configuration in current context | `info` |
+| View configuration in flat format | `info full-context` |
+| View full configuration of router | `admin show config` |
+| Search for keyword in output | `<command> \| match {keyword}` |
+| Find a command | `tree flat detail \| match <keyword>` |
+| Exit candidate mode | `exit` |
+| Exit from router | `logout` |
+
 # Hardware Configuration
 
 Assuming this is a brand new router, the cards should be configured before we proceed with the peering configuration. If this is already done, you can skip this section.
