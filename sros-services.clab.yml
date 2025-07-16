@@ -68,6 +68,10 @@ topology:
         - ip addr add 192.168.50.1/24 dev eth1.500
         - ip link set dev eth1.500 address aa:c5:ab:00:05:05
         - ip link set dev eth1.500 up
+        - ip link add name eth1.600 link eth1 type vlan id 600
+        - ip addr add 192.168.60.1/24 dev eth1.600
+        - ip link set dev eth1.600 address aa:c6:ab:00:06:06
+        - ip link set dev eth1.600 up
     ceb:
       kind: linux
       mgmt-ipv4: 172.10.10.11
@@ -87,26 +91,30 @@ topology:
       exec:
         - ip link add name eth1.100 link eth1 type vlan id 100
         - ip addr add 192.168.10.2/24 dev eth1.100
-        - ip link set dev eth1.100 address aa:c1:ab:00:01:01
+        - ip link set dev eth1.100 address ab:c1:ab:00:01:01
         - ip link set dev eth1.100 up
         - ip link add name eth1.200 link eth1 type vlan id 200
         - ip addr add 192.168.20.2/24 dev eth1.200
-        - ip link set dev eth1.200 address aa:c2:ab:00:02:02
+        - ip link set dev eth1.200 address ab:c2:ab:00:02:02
         - ip link set dev eth1.200 up
         - ip link add name eth1.300 link eth1 type vlan id 300
         - ip addr add 192.168.31.1/24 dev eth1.300
-        - ip link set dev eth1.300 address aa:c3:ab:00:03:03
+        - ip link set dev eth1.300 address ab:c3:ab:00:03:03
         - ip link set dev eth1.300 up
         - ip route add 192.168.30.0/24 via 192.168.31.254
         - ip link add name eth1.400 link eth1 type vlan id 400
         - ip addr add 192.168.41.1/24 dev eth1.400
-        - ip link set dev eth1.400 address aa:c4:ab:00:04:04
+        - ip link set dev eth1.400 address ab:c4:ab:00:04:04
         - ip link set dev eth1.400 up
         - ip route add 192.168.40.0/24 via 192.168.41.254
         - ip link add name eth1.500 link eth1 type vlan id 500
         - ip addr add 192.168.50.2/24 dev eth1.500
-        - ip link set dev eth1.500 address aa:c5:ab:00:05:05
+        - ip link set dev eth1.500 address ab:c5:ab:00:05:05
         - ip link set dev eth1.500 up
+        - ip link add name eth1.600 link eth1 type vlan id 600
+        - ip addr add 192.168.60.2/24 dev eth1.600
+        - ip link set dev eth1.600 address ab:c6:ab:00:06:06
+        - ip link set dev eth1.600 up
     cey:
       kind: linux
       mgmt-ipv4: 172.10.10.13
