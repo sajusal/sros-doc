@@ -23,9 +23,13 @@ Disclaimer: This is not an exhaustive list of all the features and associated op
 
 We will be using the below topology with 4 Provider Edge (PE) routers, 2 Provider (P) routers and 4 Customer Edge (CE) routers.
 
-All configuration examples are shown for a single PE router. Refer to the startup config files for configuration on other routers.
+All configuration examples are shown for PE routers. Refer to the startup config files for configuration on other routers.
 
-![image](/sros-topology.png)
+![image](/physical-topology.jpg)
+
+IPv4 Addressing:
+
+![image](/ip-topology.jpg)
 
 # MD-CLI Command Reference
 
@@ -1070,6 +1074,8 @@ The epipe topology for this example is shown below:
 
 ![image](epipe-topology.jpg)
 
+An Epipe will be created to establish communication between the 2 CE devices. LDP will be used as the tunneling protocol. Refer to `LDP` section in this guide for LDP configuration.
+
 **Configuration**
 
 CE facing Port configuration on PE1 and PE3:
@@ -1197,6 +1203,10 @@ The vprn topology for this example is shown below:
 
 ![image](vprn-topology.jpg)
 
+Two VPRNs - RED and BLUE will be created on PE1 and PE3 to establish communication between the Clients on either sides. SR-ISIS will be used as the tunneling protocol. Refer to `Segment Routing` section in this guide for SR-ISIS configuration.
+
+The route targets for both VPRNs will be exchanged with each other using route policies so that each VPRN's client is able to reach the other VPRN's client.
+
 **Configuration**
 
 CE facing Port configuration on PE1 and PE3:
@@ -1257,14 +1267,42 @@ Description
 VPRN ACL configuration on PE1:
 
 ```
-/configure filter ip-filter "VPRN-ACL" filter-id 103
-/configure filter ip-filter "VPRN-ACL" entry 10 match protocol icmp
-/configure filter ip-filter "VPRN-ACL" entry 10 match dst-ip address 192.168.31.1
-/configure filter ip-filter "VPRN-ACL" entry 10 match dst-ip mask 255.255.255.255
-/configure filter ip-filter "VPRN-ACL" entry 10 action accept
+/configure filter ip-filter "VPRN-RED-ACL" filter-id 103
+/configure filter ip-filter "VPRN-RED-ACL" entry 10 match protocol icmp
+/configure filter ip-filter "VPRN-RED-ACL" entry 10 match dst-ip address 192.168.31.1
+/configure filter ip-filter "VPRN-RED-ACL" entry 10 match dst-ip mask 255.255.255.255
+/configure filter ip-filter "VPRN-RED-ACL" entry 10 action accept
+
+/configure filter ip-filter "VPRN-BLUE-ACL" filter-id 104
+/configure filter ip-filter "VPRN-BLUE-ACL" entry 10 match protocol icmp
+/configure filter ip-filter "VPRN-BLUE-ACL" entry 10 match dst-ip address 192.168.41.1
+/configure filter ip-filter "VPRN-BLUE-ACL" entry 10 match dst-ip mask 255.255.255.255
+/configure filter ip-filter "VPRN-BLUE-ACL" entry 10 action accept
 ```
 
-VPRN service configuration on PE1:
+VPRN Route Policies on PE1 and PE3:
+
+The route policies configure the route-targets to be exported and imported in each VPRN. In this example, we are importing both RED and BLUE VPRN targets so that they are able to communicate with each other. Additional communities can be added as needed.
+
+```
+/configure policy-options community "BLUE" { member "target:64565:40" }
+/configure policy-options community "RED" { member "target:64555:30" }
+/configure policy-options policy-statement "export-blue" entry-type named
+/configure policy-options policy-statement "export-blue" named-entry "blue" action action-type accept
+/configure policy-options policy-statement "export-blue" named-entry "blue" action community add ["BLUE"]
+/configure policy-options policy-statement "export-red" entry-type named
+/configure policy-options policy-statement "export-red" named-entry "red" action action-type accept
+/configure policy-options policy-statement "export-red" named-entry "red" action community add ["RED"]
+/configure policy-options policy-statement "import-red-blue" entry-type named
+/configure policy-options policy-statement "import-red-blue" named-entry "red" from community name "RED"
+/configure policy-options policy-statement "import-red-blue" named-entry "red" from protocol name [bgp-vpn]
+/configure policy-options policy-statement "import-red-blue" named-entry "red" action action-type accept
+/configure policy-options policy-statement "import-red-blue" named-entry "blue" from community name "BLUE"
+/configure policy-options policy-statement "import-red-blue" named-entry "blue" from protocol name [bgp-vpn]
+/configure policy-options policy-statement "import-red-blue" named-entry "blue" action action-type accept
+```
+
+RED VPRN service configuration on PE1:
 
 ```
 /configure service vprn "RED" admin-state enable
@@ -1273,20 +1311,39 @@ VPRN service configuration on PE1:
 /configure service vprn "RED" autonomous-system 64555
 /configure service vprn "RED" bgp-ipvpn mpls admin-state enable
 /configure service vprn "RED" bgp-ipvpn mpls route-distinguisher "10.10.10.1:64555"
-/configure service vprn "RED" bgp-ipvpn mpls vrf-target import-community "target:64555:30"
-/configure service vprn "RED" bgp-ipvpn mpls vrf-target export-community "target:64555:30"
+/configure service vprn "RED" bgp-ipvpn mpls vrf-import policy ["import-red-blue"]
+/configure service vprn "RED" bgp-ipvpn mpls vrf-export policy ["export-red"]
 /configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution filter
 /configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution-filter sr-isis true
 /configure service vprn "RED" interface "to-cea" ipv4 primary address 192.168.30.254
 /configure service vprn "RED" interface "to-cea" ipv4 primary prefix-length 24
 /configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 ingress qos sap-ingress policy-name "CE-ingress-QoS"
-/configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 ingress filter ip "VPRN-ACL"
+/configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 ingress filter ip "VPRN-RED-ACL"
 /configure service vprn "RED" interface "to-cea" sap 1/1/c10/1:300 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
+BLUE VPRN service configuration on PE1:
+
+```
+/configure service vprn "BLUE" admin-state enable
+/configure service vprn "BLUE" service-id 40
+/configure service vprn "BLUE" customer "1"
+/configure service vprn "BLUE" autonomous-system 64565
+/configure service vprn "BLUE" bgp-ipvpn mpls admin-state enable
+/configure service vprn "BLUE" bgp-ipvpn mpls route-distinguisher "10.10.10.1:64565"
+/configure service vprn "BLUE" bgp-ipvpn mpls vrf-import policy ["import-red-blue"]
+/configure service vprn "BLUE" bgp-ipvpn mpls vrf-export policy ["export-blue"]
+/configure service vprn "BLUE" bgp-ipvpn mpls auto-bind-tunnel resolution filter
+/configure service vprn "BLUE" bgp-ipvpn mpls auto-bind-tunnel resolution-filter sr-isis true
+/configure service vprn "BLUE" interface "to-cea" ipv4 primary address 192.168.40.254
+/configure service vprn "BLUE" interface "to-cea" ipv4 primary prefix-length 24
+/configure service vprn "BLUE" interface "to-cea" sap 1/1/c10/1:400 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service vprn "BLUE" interface "to-cea" sap 1/1/c10/1:400 ingress filter ip "VPRN-BLUE-ACL"
+/configure service vprn "BLUE" interface "to-cea" sap 1/1/c10/1:400 egress qos sap-egress policy-name "CE-egress-QoS"
+```
 Refer to the QoS section for QoS policy configuration.
 
-VPRN service configuration on PE3:
+RED VPRN service configuration on PE3:
 
 ```
 /configure service vprn "RED" admin-state enable
@@ -1295,13 +1352,101 @@ VPRN service configuration on PE3:
 /configure service vprn "RED" autonomous-system 64555
 /configure service vprn "RED" bgp-ipvpn mpls admin-state enable
 /configure service vprn "RED" bgp-ipvpn mpls route-distinguisher "10.10.10.3:64555"
-/configure service vprn "RED" bgp-ipvpn mpls vrf-target import-community "target:64555:30"
-/configure service vprn "RED" bgp-ipvpn mpls vrf-target export-community "target:64555:30"
+/configure service vprn "RED" bgp-ipvpn mpls vrf-import policy ["import-red-blue"]
+/configure service vprn "RED" bgp-ipvpn mpls vrf-export policy ["export-red"]
 /configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution filter
 /configure service vprn "RED" bgp-ipvpn mpls auto-bind-tunnel resolution-filter sr-isis true
 /configure service vprn "RED" interface "to-cez" ipv4 primary address 192.168.31.254
 /configure service vprn "RED" interface "to-cez" ipv4 primary prefix-length 24
 /configure service vprn "RED" interface "to-cez" { sap 1/1/c10/1:300 }
+```
+
+BLUE VPRN service configuration on PE3:
+
+```
+/configure service vprn "BLUE" admin-state enable
+/configure service vprn "BLUE" service-id 40
+/configure service vprn "BLUE" customer "1"
+/configure service vprn "BLUE" autonomous-system 64565
+/configure service vprn "BLUE" bgp-ipvpn mpls admin-state enable
+/configure service vprn "BLUE" bgp-ipvpn mpls route-distinguisher "10.10.10.3:64565"
+/configure service vprn "BLUE" bgp-ipvpn mpls vrf-import policy ["import-red-blue"]
+/configure service vprn "BLUE" bgp-ipvpn mpls vrf-export policy ["export-blue"]
+/configure service vprn "BLUE" bgp-ipvpn mpls auto-bind-tunnel resolution filter
+/configure service vprn "BLUE" bgp-ipvpn mpls auto-bind-tunnel resolution-filter sr-isis true
+/configure service vprn "BLUE" interface "to-cez" ipv4 primary address 192.168.41.254
+/configure service vprn "BLUE" interface "to-cez" ipv4 primary prefix-length 24
+/configure service vprn "BLUE" interface "to-cez" { sap 1/1/c10/1:400 }
+```
+
+To verify VPRN RED route table on PE1:
+
+```
+A:admin@pe1# show router 30 route-table 
+
+===============================================================================
+Route Table (Service: 30)
+===============================================================================
+Dest Prefix[Flags]                            Type    Proto     Age        Pref
+      Next Hop[Interface Name]                                    Metric   
+-------------------------------------------------------------------------------
+192.168.30.0/24                               Local   Local     20h57m59s  0
+       to-cea                                                       0
+192.168.31.0/24                               Remote  BGP VPN   00h18m08s  170
+       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
+192.168.31.254/32                             Remote  BGP VPN   00h18m08s  170
+       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
+192.168.40.0/24                               Remote  BGP VPN   00h18m45s  0
+       Local VRF [40:to-cea]                                        0
+192.168.40.254/32                             Remote  BGP VPN   00h18m45s  0
+       Local VRF [40:to-cea]                                        0
+192.168.41.0/24                               Remote  BGP VPN   00h18m08s  170
+       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
+192.168.41.254/32                             Remote  BGP VPN   00h18m08s  170
+       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
+-------------------------------------------------------------------------------
+No. of Routes: 7
+Flags: n = Number of times nexthop is repeated
+       B = BGP backup route available
+       L = LFA nexthop available
+       S = Sticky ECMP requested
+===============================================================================
+```
+
+To verify BGP VPN routes on PE1:
+
+```
+A:admin@pe1# show router bgp routes vpn-ipv4
+===============================================================================
+ BGP Router ID:10.10.10.1       AS:64500       Local AS:64500      
+===============================================================================
+ Legend -
+ Status codes  : u - used, s - suppressed, h - history, d - decayed, * - valid
+                 l - leaked, x - stale, > - best, b - backup, p - purge
+ Origin codes  : i - IGP, e - EGP, ? - incomplete
+
+===============================================================================
+BGP VPN-IPv4 Routes
+===============================================================================
+Flag  Network                                            LocalPref   MED
+      Nexthop (Router)                                   Path-Id     IGP Cost
+      As-Path                                                        Label
+-------------------------------------------------------------------------------
+u*>i  10.10.10.3:64555:192.168.31.0/24                   100         None
+      10.10.10.3                                         None        200
+      No As-Path                                                     524285
+u*>i  10.10.10.3:64555:192.168.31.254/32                 100         0
+      10.10.10.3                                         None        200
+      No As-Path                                                     524285
+u*>i  10.10.10.3:64565:192.168.41.0/24                   100         None
+      10.10.10.3                                         None        200
+      No As-Path                                                     524275
+u*>i  10.10.10.3:64565:192.168.41.254/32                 100         0
+      10.10.10.3                                         None        200
+      No As-Path                                                     524275
+-------------------------------------------------------------------------------
+Routes : 4
+===============================================================================
 ```
 
 **Customer Verfiication**
@@ -1348,6 +1493,15 @@ EVPN-VPWS provides Epipe point-to-point services.
 
 For more details on EVPN-VPWS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
 
+The EVPN-VPWS topology for this example is shown below:
+
+![image](vpws-topology.jpg)
+
+An EVPN-VPWS service will be created to establish communication between the Clients. SR-TE will be used as the transport protocol. Refer to `SR-TE` section in this guide for the relevant SR-TE configuration.
+
+**Configuration**
+
+
 
 # EVPN-VPLS with Multihoming
 
@@ -1360,6 +1514,8 @@ EVPN can be used in MPLS networks where PEs are interconnected through any type 
 For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
 
 # Common Show commands
+
+The following commands apply to most services in this guide.
 
 **Service Status**
 
@@ -1704,3 +1860,4 @@ Egr. Matches        : 0 pkts
  
 ===============================================================================
 ```
+
