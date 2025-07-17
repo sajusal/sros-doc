@@ -91,23 +91,7 @@ Configure line card:
 /configure card 1 xiom "x1" mda 1 mda-type m36-800g-qsfpdd
 ```
 
-The state of the card and MDA can be viewed using the below show command:
-
-```
-A:admin@SR1# show card state
-
-===============================================================================
-Card State
-===============================================================================
-Slot/  Provisioned Type                  Admin Operational   Num   Num Comments
-Id         Equipped Type (if different)  State State         Ports MDA 
--------------------------------------------------------------------------------
-1      xcm-2se                           up    up                  1   
-1/1    x2-s36-800g-qsfpdd-12.0t:he12000* up    up            36        
-A      cpm-2se                           up    up                      Active
-B      cpm-2se                           up    up                      Standby
-===============================================================================
-```
+Refer to the `Show Commands` section in this guide for relevant hardware show commands.
 
 # Ports and Interfaces
 
@@ -137,22 +121,7 @@ Below is an example of a client facing port configured as 'access' mode with dot
 /configure port 1/1/c10/1 ethernet mtu 5000
 ```    
 
-The status of the port can be viewed using the below command:
-
-```
-A:admin@pe1# /show port
-
-===============================================================================
-Ports on Slot 1
-===============================================================================
-Port          Admin Link Port    Cfg  Oper LAG/ Port Port Port   C/QS/S/XFP/
-Id            State      State   MTU  MTU  Bndl Mode Encp Type   MDIMDX
--------------------------------------------------------------------------------
-1/1/c1        Up         Link Up                          conn   100GBASE-LR4*
-1/1/c1/1      Up    Yes  Up      9212 9212    - netw null cgige
-1/1/c10       Up         Link Up                          conn   100G-CWDM4 2*
-1/1/c10/1     Up    Yes  Up      9000 9000    - accs dotq xgige  
-```
+Refer to the `Show Commands` section in this guide for relevant port show commands.
 
 The interface is given a name, IP and associated to a physical port.
 
@@ -167,25 +136,7 @@ The `system` interface is the router's loopback interface (like lo0 or loopback0
 /configure router "Base" interface "system" ipv4 primary address 10.10.10.1 prefix-length 32
 ```
 
-The status of the interfaces can be seen using the below command:
-
-```
-A:admin@pe1# show router interface 
-
-===============================================================================
-Interface Table (Router: Base)
-===============================================================================
-Interface-Name                   Adm       Opr(v4/v6)  Mode    Port/SapId
-   IP-Address                                                  PfxState
--------------------------------------------------------------------------------
-To-P1                            Up        Up/Down     Network 1/1/c1/1
-   172.16.10.0/31                                              n/a
-system                           Up        Up/Down     Network system
-   10.10.10.1/32                                               n/a
--------------------------------------------------------------------------------
-Interfaces : 2
-===============================================================================
-```
+Refer to the `Show Commands` section in this guide for relevant interface show commands.
 
 BFD can be enabled under the interface for both IPv4 and IPv6. In SR OS, BFD is enabled once under the interface along with the timers and the state is shared with different protocols running over that interface by enabling `bfd-liveness` under each protocol's context.
 
@@ -199,63 +150,24 @@ Enabling BFD state sharing on OSPF:
 /configure router ospf area 0 interface "To-P1" bfd-liveness remain-down-on-failure true
 ```
 
-BFD status can be checked using the following command:
-
-```
-A:admin@pe1# show router bfd session 
-
-===============================================================================
-Legend:
-  Session Id = Interface Name | LSP Name | Prefix | RSVP Sess Name | Service Id
-  wp = Working path   pp = Protecting path
-===============================================================================
-BFD Session
-===============================================================================
-Session Id                                        State      Tx Pkts    Rx Pkts
-  Rem Addr/Info/SdpId:VcId                      Multipl     Tx Intvl   Rx Intvl
-  Protocols                                        Type     LAG Port     LAG ID
-  Loc Addr                                                             LAG name
--------------------------------------------------------------------------------
-To-P1                                                Up          273        272
-  172.16.10.1                                         3          100        100
-  ospf2                                             iom          N/A        N/A
-  172.16.10.0                                                                  
--------------------------------------------------------------------------------
-No. of BFD sessions: 1
-===============================================================================
-```
+Refer to the `Show Commands` section in this guide for relevant bfd show commands.
 
 # Underlay Routing
 
 ## IGP - OSPF
 
-In this example, we are configuring a OSPFv2 neighbor. Port and interface configuration is similar to what is shown in previous section.
+In this example, we are configuring a OSPFv2 neighbor. Port and interface configuration is similar to what is shown in previous section. OSPF is given a higher preference value so that ISIS is preferred in our topology.
 
 For more details on OSPF configuration, visit [SR OS OSPF Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/unicast-routing-protocols/ospf.html).
 
 ```
 /configure router "Base" ospf 0 admin-state enable
+/configure router "Base" ospf 0 preference 20
 /configure router "Base" ospf 0 area 0.0.0.0 interface "To-P1" interface-type point-to-point
 /configure router "Base" ospf 0 area 0.0.0.0 interface "system" interface-type point-to-point
 ```
 
-OSPF neighbor status can be seen using the below command:
-
-```
-A:admin@pe1# show router ospf neighbor 
-
-===============================================================================
-Rtr Base OSPFv2 Instance 0 Neighbors
-===============================================================================
-Interface-Name                   Rtr Id          State      Pri  RetxQ   TTL
-   Area-Id
--------------------------------------------------------------------------------
-To-P1                            10.10.10.10     Full       1    0       38
-   0.0.0.0
--------------------------------------------------------------------------------
-No. of Neighbors: 1
-===============================================================================
-```
+Refer to the `Show Commands` section in this guide for relevant OSPF show commands.
 
 ## IGP - IS-IS
 
@@ -270,21 +182,7 @@ For more details on IS-IS configuration, visit [SR OS IS-IS Documentation](https
 /configure router "Base" isis 0 interface "system" interface-type point-to-point
 ```
 
-IS-IS adjacency status can be seen using the below command:
-
-```
-A:admin@pe1# show router isis adjacency 
-
-===============================================================================
-Rtr Base ISIS Instance 0 Adjacency 
-===============================================================================
-System ID                Usage State Hold Interface                     MT-ID
--------------------------------------------------------------------------------
-p1                       L1L2  Up    19   To-P1                         0
--------------------------------------------------------------------------------
-Adjacencies : 1
-===============================================================================
-```
+Refer to the `Show Commands` section in this guide for relevant IS-IS show commands.
 
 ## BGP
 
@@ -308,39 +206,7 @@ For more details on BGP configuration, visit [SR OS BGP Documentation](https://d
 /configure router "Base" bgp neighbor "10.10.10.4" family evpn true
 ```
 
-BGP neighbor status can be seen using the below command.
-
-```
-A:admin@pe1# show router bgp summary 
-===============================================================================
- BGP Router ID:10.10.10.1       AS:64500       Local AS:64500      
-===============================================================================
-BGP Admin State         : Up          BGP Oper State              : Up
-Total Peer Groups       : 1           Total Peers                 : 2         
-Total VPN Peer Groups   : 0           Total VPN Peers             : 0         
-Current Internal Groups : 1           Max Internal Groups         : 1         
-Total BGP Paths         : 18          Total Path Memory           : 6624  
-
--- snip --
-
-===============================================================================
-BGP Summary
-===============================================================================
-Legend : D - Dynamic Neighbor
-===============================================================================
-Neighbor
-Description
-                   AS PktRcvd InQ  Up/Down   State|Rcv/Act/Sent (Addr Family)
-                      PktSent OutQ
--------------------------------------------------------------------------------
-10.10.10.3
-                64500       3    0 00h00m20s 0/0/0 (Evpn)
-                            3    0           
-10.10.10.4
-                64500       3    0 00h00m11s 0/0/0 (Evpn)
-                            3    0           
--------------------------------------------------------------------------------
-```
+Refer to the `Show Commands` section in this guide for relevant BGP show commands.
 
 # Transport Protocol
 
@@ -1501,7 +1367,108 @@ An EVPN-VPWS service will be created to establish communication between the Clie
 
 **Configuration**
 
+CE facing Port configuration on PE1 and PE3:
 
+```
+/configure port 1/1/c10/1 admin-state enable
+/configure port 1/1/c10/1 ethernet mode access
+/configure port 1/1/c10/1 ethernet encap-type dot1q
+/configure port 1/1/c10/1 ethernet mtu 5000
+```
+
+BGP configuration on PE1:
+
+```
+/configure router "Base" bgp router-id 10.10.10.1
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.3" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.3" family evpn true
+```
+
+BGP configuration on PE3:
+
+```
+/configure router "Base" bgp router-id 10.10.10.3
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.1" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.1" family evpn true
+```
+
+ACL configuration on PE1:
+
+```
+/configure filter ip-filter "VPWS-ACL" filter-id 106
+/configure filter ip-filter "VPWS-ACL" entry 10 match protocol icmp
+/configure filter ip-filter "VPWS-ACL" entry 10 match dst-ip address 192.168.60.2
+/configure filter ip-filter "VPWS-ACL" entry 10 match dst-ip mask 255.255.255.255
+/configure filter ip-filter "VPWS-ACL" entry 10 action accept
+```
+
+EVPN-VPWS configuration on PE1:
+
+```
+/configure service epipe "VPWS-VLAN600" admin-state enable
+/configure service epipe "VPWS-VLAN600" description "EVPN-VPWS-VLAN600"
+/configure service epipe "VPWS-VLAN600" service-id 60
+/configure service epipe "VPWS-VLAN600" customer "1"
+/configure service epipe "VPWS-VLAN600" bgp 1 route-distinguisher "10.10.10.1:60"
+/configure service epipe "VPWS-VLAN600" bgp 1 route-target export "target:64500:60"
+/configure service epipe "VPWS-VLAN600" bgp 1 route-target import "target:64500:60"
+/configure service epipe "VPWS-VLAN600" sap 1/1/c10/1:600 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service epipe "VPWS-VLAN600" sap 1/1/c10/1:600 ingress filter ip "VPWS-ACL"
+/configure service epipe "VPWS-VLAN600" sap 1/1/c10/1:600 egress qos sap-egress policy-name "CE-egress-QoS"
+/configure service epipe "VPWS-VLAN600" bgp-evpn local-attachment-circuit "local" eth-tag 1111
+/configure service epipe "VPWS-VLAN600" bgp-evpn remote-attachment-circuit "remote" eth-tag 9999
+/configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 admin-state enable
+/configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 auto-bind-tunnel resolution filter
+/configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 auto-bind-tunnel resolution-filter sr-te true
+```
+
+EVPN-VPWS configuration on PE3:
+
+```
+/configure service epipe "VPWS-VLAN600" admin-state enable
+/configure service epipe "VPWS-VLAN600" description "EVPN-VPWS-VLAN600"
+/configure service epipe "VPWS-VLAN600" service-id 60
+/configure service epipe "VPWS-VLAN600" customer "1"
+/configure service epipe "VPWS-VLAN600" bgp 1 route-distinguisher "10.10.10.3:60"
+/configure service epipe "VPWS-VLAN600" bgp 1 route-target export "target:64500:60"
+/configure service epipe "VPWS-VLAN600" bgp 1 route-target import "target:64500:60"
+/configure service epipe "VPWS-VLAN600" sap 1/1/c10/1:600 { }
+/configure service epipe "VPWS-VLAN600" bgp-evpn local-attachment-circuit "local" eth-tag 9999
+/configure service epipe "VPWS-VLAN600" bgp-evpn remote-attachment-circuit "remote" eth-tag 1111
+/configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 admin-state enable
+/configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 auto-bind-tunnel resolution filter
+/configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 auto-bind-tunnel resolution-filter sr-te true
+```
+
+Refer to `Show Commands` section for verification commands.
+
+**Customer Verfiication**
+
+Login to CEA:
+
+```
+docker exec -it cea bash
+```
+
+Ping CEZ VLAN 600 from CEA:
+
+```
+└──> ping -c 100 -Q 34 192.168.60.2
+PING 192.168.60.2 (192.168.60.2) 56(84) bytes of data.
+64 bytes from 192.168.60.2: icmp_seq=1 ttl=64 time=9.93 ms
+64 bytes from 192.168.60.2: icmp_seq=2 ttl=64 time=5.25 ms
+64 bytes from 192.168.60.2: icmp_seq=3 ttl=64 time=4.81 ms
+
+--- 192.168.60.2 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 99142ms
+rtt min/avg/max/mdev = 4.488/5.589/16.327/1.665 ms
+```
+
+While ping is in progress, check the SAP, ACL and QoS stats.
+
+Refer to the `Common show commands` section in this guide for relevant commands.
 
 # EVPN-VPLS with Multihoming
 
@@ -1513,11 +1480,220 @@ EVPN can be used in MPLS networks where PEs are interconnected through any type 
 
 For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
 
-# Common Show commands
+# Show commands
 
-The following commands apply to most services in this guide.
+## Hardware and System
 
-**Service Status**
+To verify chassis information including fan, power supply status:
+
+```
+show chassis detail
+```
+
+To verify control and line card status:
+
+```
+show card state
+```
+
+To view control card details:
+
+```
+show card A detail
+```
+
+To view line card details:
+
+```
+show card 1 detail
+```
+
+To verify current software version:
+
+```
+show version
+```
+
+To view routing table:
+
+```
+show router route-table
+```
+
+## Port and Interfaces
+
+To view a summary of all ports:
+
+```
+show port
+```
+
+To view a port's details:
+
+```
+show port 1/1/c1/1 detail
+```
+
+To view a port's optics information:
+
+```
+show port 1/1/c1 optical 
+```
+
+To view a port's statistics:
+
+```
+show port 1/1/c1/1 statistics
+```
+
+To view all interfaces:
+
+```
+show router interface
+```
+
+To view an interface's detail:
+
+```
+show router interface To-P1 detail
+```
+
+To view BFD session status:
+
+```
+show router bfd session
+```
+
+## OSPF
+
+To view OSPF adjacency status:
+
+```
+show router ospf neighbor
+```
+
+To view interfaces participating in OSPF:
+
+```
+show router ospf interface
+```
+
+To view a summary of OSPF:
+
+```
+show router ospf status
+```
+
+To view OSPF RIB routes:
+
+```
+show router ospf routes
+```
+
+To view OSPF database:
+
+```
+show router ospf database
+```
+
+## IS-IS
+
+To view ISIS adjacency status:
+
+```
+show router isis adjacency
+```
+
+To view interfaces participating in ISIS:
+
+```
+show router isis interface
+```
+
+To view a summary of ISIS:
+
+```
+show router isis status
+```
+
+To view ISIS RIB routes:
+
+```
+show router isis routes
+```
+
+To view ISIS database:
+
+```
+show router isis database
+```
+
+## BGP
+
+To view BGP neigbor status:
+
+```
+show router bgp summary
+```
+
+To view BGP routes advertised to a neighbor:
+
+```
+show router bgp neighbor "10.10.10.3" advertised-routes evpn
+```
+
+To view BGP routes received from a neighbor:
+
+```
+show router bgp neighbor "10.10.10.3"  received-routes evpn
+```
+
+To view BGP IPv4 routes:
+
+```
+show router bgp routes
+```
+
+To view BGP VPN-IPv4 routes:
+
+```
+show router bgp routes vpn-ipv4
+```
+
+To view EVPN Type 1 routes:
+
+```
+show router bgp routes evpn auto-disc
+```
+
+To view EVPN Type 2 routes:
+
+```
+show router bgp routes evpn mac
+```
+
+To view EVPN Type 3 routes:
+
+```
+show router bgp routes evpn incl-mcast
+```
+
+To view EVPN Type 4 routes:
+
+```
+show router bgp routes evpn eth-seg
+```
+
+To view EVPN Type 5 routes:
+
+```
+show router bgp routes evpn ip-prefix
+```
+
+## LDP
+
+
+## Services
 
 ```
 A:admin@pe1# show service id "CEA1-VLAN100" base
