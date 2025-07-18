@@ -2,6 +2,11 @@
 
 This page provides the basic step-by-step configuration required to set up services on a Nokia 7750 Service Router. All the required feature sets for each service type are covered here with configuration and show examples. Most sections also provide links to Nokia documentation for further reading.
 
+| Contributors | Handle |
+|---|---|
+| Mohammad Zaman | [mfzhsn](https://github.com/mfzhsn) |
+| Saju Salahudeen | [sajusal](https://github.com/sajusal) |
+
 All configurations are in MD-CLI flat format. Reference chassis is 7750 SR-1-24D and software version is SR OS 25.3.R1. Use `show system info` command to verify your router's chassis model and software version.
 
 The following services are covered in this guide:
