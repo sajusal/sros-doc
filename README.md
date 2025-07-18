@@ -8,7 +8,7 @@ The following services are covered in this guide:
 
 - Epipe
 - VPLS
-- VPRN
+- [VPRN](#vpls)
 - IES
 - EVPN-VPWS
 - EVPN-MPLS
@@ -1055,7 +1055,7 @@ A VPLS service provides connectivity between two or more SAPs on one (which is c
 
 The VPLS topology for this example is shown below:
 
-![image](vpls-topology.jpg)
+![image](./vpls-topology.png)
 
 Layer 2 VPLS will be created to establish communication between the Clients on either sides. LDP will be used as the tunneling protocol which eventually is used to build SDPs.
 
@@ -1203,7 +1203,7 @@ Legend:L=Learned O=Oam P=Protected-MAC C=Conditional S=Static Lf=Leaf T=Trusted
 ===============================================================================
 ```
 
-## MTU:
+### MTU:
 
 MTU play a important role in establishing a functional VPLS service.
 
