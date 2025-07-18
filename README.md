@@ -37,7 +37,7 @@ Here's a reference table with some commonly used commands.
 
 | Action | Command |
 | --- | --- |
-| Enter Candidate mode | `configure private` |
+| Enter candidate mode | `configure private` |
 | Commit configuration changes | `commit` |
 | Delete configuration elements | `delete {command path}` |
 | Discard configuration changes | `discard` |
@@ -91,7 +91,7 @@ Configure line card:
 /configure card 1 xiom "x1" mda 1 mda-type m36-800g-qsfpdd
 ```
 
-Refer to the `Show Commands` section in this guide for relevant hardware show commands.
+Refer to the `show commands` section in this guide for relevant hardware show commands.
 
 # Ports and Interfaces
 
@@ -121,7 +121,7 @@ Below is an example of a client facing port configured as 'access' mode with dot
 /configure port 1/1/c10/1 ethernet mtu 5000
 ```    
 
-Refer to the `Show Commands` section in this guide for relevant port show commands.
+Refer to the `show commands` section in this guide for relevant port show commands.
 
 The interface is given a name, IP and associated to a physical port.
 
@@ -136,7 +136,7 @@ The `system` interface is the router's loopback interface (like lo0 or loopback0
 /configure router "Base" interface "system" ipv4 primary address 10.10.10.1 prefix-length 32
 ```
 
-Refer to the `Show Commands` section in this guide for relevant interface show commands.
+Refer to the `show commands` section in this guide for relevant interface show commands.
 
 BFD can be enabled under the interface for both IPv4 and IPv6. In SR OS, BFD is enabled once under the interface along with the timers and the state is shared with different protocols running over that interface by enabling `bfd-liveness` under each protocol's context.
 
@@ -150,7 +150,7 @@ Enabling BFD state sharing on OSPF:
 /configure router ospf area 0 interface "To-P1" bfd-liveness remain-down-on-failure true
 ```
 
-Refer to the `Show Commands` section in this guide for relevant bfd show commands.
+Refer to the `show commands` section in this guide for relevant bfd show commands.
 
 # Underlay Routing
 
@@ -167,7 +167,7 @@ For more details on OSPF configuration, visit [SR OS OSPF Documentation](https:/
 /configure router "Base" ospf 0 area 0.0.0.0 interface "system" interface-type point-to-point
 ```
 
-Refer to the `Show Commands` section in this guide for relevant OSPF show commands.
+Refer to the `show commands` section in this guide for relevant OSPF show commands.
 
 ## IGP - IS-IS
 
@@ -182,7 +182,7 @@ For more details on IS-IS configuration, visit [SR OS IS-IS Documentation](https
 /configure router "Base" isis 0 interface "system" interface-type point-to-point
 ```
 
-Refer to the `Show Commands` section in this guide for relevant IS-IS show commands.
+Refer to the `show commands` section in this guide for relevant IS-IS show commands.
 
 ## BGP
 
@@ -206,7 +206,7 @@ For more details on BGP configuration, visit [SR OS BGP Documentation](https://d
 /configure router "Base" bgp neighbor "10.10.10.4" family evpn true
 ```
 
-Refer to the `Show Commands` section in this guide for relevant BGP show commands.
+Refer to the `show commands` section in this guide for relevant BGP show commands.
 
 # Transport Protocol
 
@@ -221,51 +221,7 @@ For more details on LDP configuration, visit [SR OS LDP Documentation](https://d
 /configure router "Base" ldp interface-parameters interface "To-P2" ipv4 admin-state enable
 ```
 
-To verify LDP, check LDP Discovery status:
-
-```
-A:admin@pe1# show router ldp discovery 
-
-===============================================================================
-LDP IPv4 Hello Adjacencies
-===============================================================================
-Interface Name                   Local Addr                              State
-AdjType                          Peer Addr                               
--------------------------------------------------------------------------------
-To-P1                            10.10.10.1:0                            Estab
-link                             10.10.10.10:0                           
-                                                                         
-To-P2                            10.10.10.1:0                            Estab
-link                             10.10.10.20:0                           
-                                                                         
--------------------------------------------------------------------------------
-No. of IPv4 Hello Adjacencies: 2
-===============================================================================
-```
-
-Check LDP tunnels:
-
-```
-A:admin@pe1# show router tunnel-table protocol ldp 
-
-===============================================================================
-IPv4 Tunnel Table (Router: Base)
-===============================================================================
-Destination           Owner     Encap TunnelId  Pref   Nexthop        Metric
-   Color                                                              
--------------------------------------------------------------------------------
-10.10.10.2/32         ldp       MPLS  65537     9      172.16.10.1    2
-10.10.10.3/32         ldp       MPLS  65540     9      172.16.10.1    2
-10.10.10.4/32         ldp       MPLS  65539     9      172.16.10.1    2
-10.10.10.10/32        ldp       MPLS  65538     9      172.16.10.1    1
-10.10.10.20/32        ldp       MPLS  65541     9      172.16.10.9    1
--------------------------------------------------------------------------------
-Flags: B = BGP or MPLS backup hop available
-       L = Loop-Free Alternate (LFA) hop available
-       E = Inactive best-external BGP route
-       k = RIB-API or Forwarding Policy backup hop
-===============================================================================
-```
+Refer to the `show commands` section in this guide for relevant LDP show commands.
 
 ## RSVP-TE
 
@@ -291,50 +247,6 @@ Configure MPLS:
 /configure router "Base" mpls interface "system" { }
 ```
 
-Verify RSVP Interface:
-
-```
-A:admin@pe1# show router rsvp interface 
-
-===============================================================================
-RSVP Interfaces
-===============================================================================
-Interface                        Total    Active    Total BW  Resv BW   Adm Opr
-                                 Sessions Sessions  (Mbps)    (Mbps)        
--------------------------------------------------------------------------------
-system                           -        -         -         -         Up  Up
-To-P1                            0        0         100000    0         Up  Up
-To-P2                            0        0         100000    0         Up  Up
--------------------------------------------------------------------------------
-Interfaces : 3
-===============================================================================
-```
-
-Verify MPLS Interface:
-
-```
-A:admin@pe1# show router mpls interface 
-
-===============================================================================
-MPLS Interfaces
-===============================================================================
-Interface                           Port-id           Adm  Opr(V4/V6) TE-
-                                                                      metric
--------------------------------------------------------------------------------
-system                              system            Up   Up/Down    None
-  Admin Groups                      None
-  SRLG Groups                       None
-To-P1                               1/1/c1/1          Up   Up/Down    None
-  Admin Groups                      None
-  SRLG Groups                       None
-To-P2                               1/1/c2/1          Up   Up/Down    None
-  Admin Groups                      None
-  SRLG Groups                       None
--------------------------------------------------------------------------------
-Interfaces : 3
-===============================================================================
-```
-
 Configure MPLS LSP:
 
 ```
@@ -348,129 +260,7 @@ Configure MPLS LSP:
 /configure router "Base" mpls lsp "lsp-to-R3" { primary "loose" }
 ```
 
-Verify MPLS LSP:
-
-```
-A:admin@pe1# show router mpls lsp
-
-===============================================================================
-MPLS LSPs (Originating)
-===============================================================================
-LSP Name                                            Tun     Fastfail  Adm  Opr
-  To                                                Id      Config         
--------------------------------------------------------------------------------
-lsp-to-R3                                           1       No        Up   Up
-  10.10.10.3                                                               
--------------------------------------------------------------------------------
-LSPs : 1
-===============================================================================
-```
-
-```
-A:admin@pe1# show router mpls lsp "lsp-to-R3" path detail 
-
-===============================================================================
-MPLS LSP lsp-to-R3 Path  (Detail)
-===============================================================================
-Legend : 
-    @ - Detour Available              # - Detour In Use
-    b - Bandwidth Protected           n - Node Protected
-    s - Soft Preemption           
-    S - Strict                        L - Loose
-    A - ABR                           + - Inherited
-===============================================================================
--------------------------------------------------------------------------------
-LSP lsp-to-R3
-Path loose
--------------------------------------------------------------------------------
-LSP Name    : lsp-to-R3
-From             : 10.10.10.1              
-To               : 10.10.10.3              
-Admin State      : Up                      Oper State        : Up
-Path Name   : loose
-Path LSP ID      : 43008                   Path Type         : Primary
-Path Admin       : Up                      Path Oper         : Up
-Out Interface    : 1/1/c1/1                Out Label         : 524277
-Path Up Time     : 0d 00:01:02             Path Down Time    : 0d 00:00:00
-Retry Limit      : 0                       Retry Timer       : 30 sec
-Retry Attempt    : 0                       Next Retry In     : 0 sec
- 
-BFD Configuration and State
-Template         : None                    Ping Interval     : 60
-Enable           : False                   State             : notApplicable
-WaitForUpTimer   : 4 sec                   OperWaitForUpTimer: N/A
-WaitForUpTmLeft  : 0 sec                   
- 
-Adspec           : Disabled                Oper Adspec       : Disabled
-PathCompMethod   : local-cspf              OperPathCompMethod: local-cspf
-MetricType       : igp                     Oper MetricType   : igp
-Least Fill       : Disabled                Oper LeastFill    : Disabled
-FRR              : Disabled                Oper FRR          : Disabled
-Propagate Adm Grp: Disabled                Oper Prop Adm Grp : Disabled
-Inter-area       : False                   
- 
-PCE Report       : Disabled+               Oper PCE Report   : Disabled
-PCE Control      : Disabled                Oper PCE Control  : Disabled
-PCE Update ID    : 0                       
- 
-Neg MTU          : 8690                    Oper MTU          : 8690
-Bandwidth        : No Reservation          Oper Bandwidth    : 0 Mbps
-Hop Limit        : 255                     Oper HopLimit     : 255
-Record Route     : Record                  Oper Record Route : Record
-Record Label     : Record                  Oper Record Label : Record
-Setup Priority   : 7                       Oper SetupPriority: 7
-Hold Priority    : 0                       Oper HoldPriority : 0
-Class Type       : 0                       Oper CT           : 0
-Backup CT        : None                    
-MainCT Retry     : n/a                     
-    Rem          :                         
-MainCT Retry     : 0                       
-    Limit        :                         
-Include Groups   :                         Oper IncludeGroups: 
-None                                           None
-Exclude Groups   :                         Oper ExcludeGroups: 
-None                                           None
- 
-Adaptive         : Enabled                 Oper Metric       : 11
-Preference       : n/a                     
-Path Trans       : 1                       CSPF Queries      : 1
-Degraded         : False                   
-Failure Code     : noError
-Failure Node : n/a
-Explicit Hops    :                         
-                  10.10.10.10(S)
-Actual Hops      :                         
-    172.16.10.0(10.10.10.1)                      Record Label        : N/A
- -> 172.16.10.1(10.10.10.10)                     Record Label        : 524277
- -> 172.16.10.5(10.10.10.3)                      Record Label        : 524279
-Computed Hops    :                         
-    172.16.10.0(S)    
- -> 172.16.10.1(S)    
- -> 172.16.10.5(S)    
-Resignal Eligible: False                   
-Last Resignal    : n/a                     CSPF Metric       : 11
-===============================================================================
-```
-
-Verify tunnel table:
-
-```
-A:admin@pe1# show router tunnel-table protocol rsvp 
-
-===============================================================================
-IPv4 Tunnel Table (Router: Base)
-===============================================================================
-Destination           Owner     Encap TunnelId  Pref   Nexthop        Metric
-   Color                                                              
--------------------------------------------------------------------------------
-10.10.10.3/32         rsvp      MPLS  1         7      172.16.10.1    11
--------------------------------------------------------------------------------
-Flags: B = BGP or MPLS backup hop available
-       L = Loop-Free Alternate (LFA) hop available
-       E = Inactive best-external BGP route
-       k = RIB-API or Forwarding Policy backup hop
-===============================================================================
-```
+Refer to the `show commands` section in this guide for relevant MPLS/RSVP show commands.
 
 ## Segment Routing
 
@@ -495,31 +285,7 @@ Configure Segment Routing for ISIS:
 /configure router "Base" isis 0 interface "system" ipv4-node-sid index 1
 ```
 
-Verify Segment Routing tunnels:
-
-```
-A:admin@pe1# show router tunnel-table protocol isis 
-
-===============================================================================
-IPv4 Tunnel Table (Router: Base)
-===============================================================================
-Destination           Owner     Encap TunnelId  Pref   Nexthop        Metric
-   Color                                                              
--------------------------------------------------------------------------------
-10.10.10.2/32         isis (0)  MPLS  524292    11     172.16.10.1    20
-10.10.10.3/32         isis (0)  MPLS  524291    11     172.16.10.1    20
-10.10.10.4/32         isis (0)  MPLS  524293    11     172.16.10.1    20
-10.10.10.10/32        isis (0)  MPLS  524290    11     172.16.10.1    10
-10.10.10.20/32        isis (0)  MPLS  524295    11     172.16.10.9    10
-172.16.10.1/32        isis (0)  MPLS  524289    11     172.16.10.1    0
-172.16.10.9/32        isis (0)  MPLS  524294    11     172.16.10.9    0
--------------------------------------------------------------------------------
-Flags: B = BGP or MPLS backup hop available
-       L = Loop-Free Alternate (LFA) hop available
-       E = Inactive best-external BGP route
-       k = RIB-API or Forwarding Policy backup hop
-===============================================================================
-```
+Refer to the `show commands` section in this guide for relevant SR-MPLS show commands.
 
 ## SR-TE
 
@@ -538,68 +304,7 @@ In this example, we will configure a SR-TE LSP using loose hops in which case th
 /configure router "Base" mpls lsp "lsp-sr-te-R3" primary "loose" { }
 ```
 
-Verify SR-TE LSP status:
-
-```
-A:admin@pe1# show router mpls sr-te-lsp "lsp-sr-te-R3" 
-
-===============================================================================
-MPLS SR-TE LSPs (Originating)
-===============================================================================
-LSP Name                                            Tun     Protect   Adm  Opr
-  To                                                Id      Path           
--------------------------------------------------------------------------------
-lsp-sr-te-R3                                        1       N/A       Up   Up
-  10.10.10.3                                                               
--------------------------------------------------------------------------------
-LSPs : 1
-===============================================================================
-```
-
-Verify SR-TE LSP path:
-
-```
-A:admin@pe1# show router mpls sr-te-lsp "lsp-sr-te-R3" path detail 
-
-===============================================================================
-MPLS SR-TE LSP lsp-sr-te-R3
-Path  (Detail)
-===============================================================================
-Legend : 
-    S      - Strict                      L      - Loose
-    A-SID  - Adjacency SID               N-SID  - Node SID 
-    +      - Inherited 
-===============================================================================
--------------------------------------------------------------------------------
-LSP SR-TE lsp-sr-te-R3
-Path  loose
--------------------------------------------------------------------------------
-LSP Name    : lsp-sr-te-R3
-Path LSP ID      : 49152                   
-From             : 10.10.10.1              
-To               : 10.10.10.3              
-Admin State      : Up                      Oper State        : Up
-Path Name   : loose
-Path Type        : Primary                 
-Path Admin       : Up                      Path Oper         : Up
-Path Up Time     : 3d 02:38:51             Path Down Time    : 0d 00:00:00
-Retry Limit      : 0                       Retry Timer       : 30 sec
-Retry Attempt    : 0                       Next Retry In     : 0 sec
-<--snip-->
-IGP/TE/Del Metric: 200                     Oper Metric       : 200
-Oper MTU         : 8682                    Path Trans        : 3
-Degraded         : False                   
-Failure Code     : noError
-Failure Node     : n/a
-Explicit Hops    :                         
-    No Hops Specified
-Actual Hops      :                         
-    172.16.10.9(10.10.10.20)(A-SID)              Record Label        : 524276
- -> 172.16.10.12(10.10.10.3)(A-SID)              Record Label        : 524276
-
-===============================================================================
-```
-
+Refer to the `show commands` section in this guide for relevant SR-TE show commands.
 
 # ACL
 
@@ -622,53 +327,10 @@ Below is an example of a IPv4 ACL.
 The ACL is applied to the service SAP.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress filter ip "Epipe-ACL"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 ingress filter ip "Epipe-ACL"
 ```
 
-ACL statistics can be seen using the below command:
-
-```
-A:admin@pe1# show filter ip "Epipe-ACL" 
-
-===============================================================================
-IP Filter
-===============================================================================
-Filter Id           : 101                          Applied        : Yes
-Scope               : Template                     Def. Action    : Drop
-Type                : Normal                       
-Shared Policer      : Off                          
-System filter       : Unchained                    
-Radius Ins Pt       : n/a                          
-CrCtl. Ins Pt       : n/a                          
-RadSh. Ins Pt       : n/a                          
-PccRl. Ins Pt       : n/a                          
-Entries             : 1                            
-Description         : (Not Specified)
-Filter Name         : Epipe-ACL
--------------------------------------------------------------------------------
-Filter Match Criteria : IP
--------------------------------------------------------------------------------
-Entry               : 10
-Description         : (Not Specified)
-Log Id              : n/a                          
-Src. IP             : 0.0.0.0/0
-Src. Port           : n/a
-Dest. IP            : 192.168.10.2/32
-Dest. Port          : n/a
-Protocol            : icmp
-Dscp                : Undefined                    
-ICMP Type           : Undefined                    ICMP Code      : Undefined
-Fragment            : Off                          Src Route Opt  : Off
-Sampling            : Off                          Int. Sampling  : On
-IP-Option           : 0/0                          Multiple Option: Off
-Tcp-flag            : (Not Specified)
-Option-pres         : Off                          
-Egress PBR          : Disabled                     
-Primary Action      : Forward                      
-Ing. Matches        : 438 pkts (46428 bytes)
-Egr. Matches        : 0 pkts
-===============================================================================
-```
+Refer to the `show commands` section in this guide for relevant ACL show commands.
 
 # QoS
 
@@ -694,7 +356,7 @@ At Service Ingress, Classification is configured in a `sap-ingress` policy.
 The `sap-ingress` policy is applied to the service SAP.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
 ```
 
 At Network Ingress, Classification is configured in a `network` policy.
@@ -739,8 +401,8 @@ At Service Egress, Queuing is configured in a `sap-egress` policy.
 Both `sap-ingress` and `sap-egress` policies are applied under the service SAP.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
 At Network Ingress and Egress, Queuing is configured in a `network-queue` policy.
@@ -804,7 +466,7 @@ At Service Egress, remarking is configured in the `sap-egress` policy.
 The `sap-egress` policy is applied under the service SAP context.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
 At Network Egress, remarking is configured in the `network` policy.
@@ -821,6 +483,8 @@ The remarking policy is applied under the interface.
 ```
 /configure router "Base" interface "To-P1" qos network-policy "Network-QoS"
 ```
+
+Refer to the `show commands` section in this guide for relevant QoS show commands.
 
 # Service Components
 
@@ -852,26 +516,7 @@ Note - in `hybrid` mode, minimum encapsulation is dot1q
 SAPs are configured within a service configuration context.
 
 ```
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100
-```
-
-To list all SAPs that are configured under all services:
-
-```
-A:admin@pe1# show service sap-using 
-
-===============================================================================
-Service Access Points 
-===============================================================================
-PortId                          SvcId      Ing.  Ing.    Egr.  Egr.   Adm  Opr
-                                           QoS   Fltr    QoS   Fltr        
--------------------------------------------------------------------------------
-1/1/c10/1:100                   10         11    ip4     12    none   Up   Up
-1/1/c10/1:200                   20         1     none    1     none   Up   Up
--------------------------------------------------------------------------------
-Number of SAPs : 2
--------------------------------------------------------------------------------
-===============================================================================
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100
 ```
 
 ## SDP
@@ -885,49 +530,16 @@ SDP is identified by a numerical id.
 In this example, we are creating a SDP to PE3 that will use LDP.
 
 ```
-/configure service sdp 55 admin-state enable
-/configure service sdp 55 delivery-type mpls
-/configure service sdp 55 ldp true
-/configure service sdp 55 far-end ip-address 10.10.10.3
+/configure service sdp 510 admin-state enable
+/configure service sdp 510 delivery-type mpls
+/configure service sdp 510 ldp true
+/configure service sdp 510 far-end ip-address 10.10.10.3
 ```
 
 The association of the service with the SDP is done under the service context. The SDP id is used along with a unique `vc-id` which is used to identify the service on the remote end. A MPLS label is generated for each unique `vc-id` and is used as the service label in MPLS encapsulation.
 
 ```
-/configure service epipe "CEA1-VLAN100" spoke-sdp 55:100
-```
-
-To verify the status of a SDP:
-
-```
-A:admin@pe1# show service sdp 55
-
-============================================================================
-Service Destination Point (Sdp Id : 55)
-============================================================================
-SdpId  AdmMTU  OprMTU  Far End          Adm  Opr         Del     LSP   Sig
-----------------------------------------------------------------------------
-55     0       8682    10.10.10.3       Up   Up          MPLS    L     TLDP
-============================================================================
-```
-
-To see a list of SDP's used on all services:
-
-```
-A:admin@pe1# show service sdp-using 
-
-===============================================================================
-SDP Using
-===============================================================================
-SvcId      SdpId              Type   Far End              Opr   I.Label E.Label
-                                                          State         
--------------------------------------------------------------------------------
-10         55:100             Spok   10.10.10.3           Up    524277  524277
-20         65:200             Spok   10.10.10.3           Up    524265  524265
--------------------------------------------------------------------------------
-Number of SDPs : 2
--------------------------------------------------------------------------------
-===============================================================================
+/configure service epipe "Epipe-VLAN100" spoke-sdp 510:100
 ```
 
 # Epipe
@@ -956,19 +568,19 @@ CE facing Port configuration on PE1 and PE3:
 SDP configuration on PE1:
 
 ```
-/configure service sdp 55 admin-state enable
-/configure service sdp 55 delivery-type mpls
-/configure service sdp 55 ldp true
-/configure service sdp 55 far-end ip-address 10.10.10.3
+/configure service sdp 510 admin-state enable
+/configure service sdp 510 delivery-type mpls
+/configure service sdp 510 ldp true
+/configure service sdp 510 far-end ip-address 10.10.10.3
 ```
 
 SDP configuration on PE3:
 
 ```
-/configure service sdp 56 admin-state enable
-/configure service sdp 56 delivery-type mpls
-/configure service sdp 56 ldp true
-/configure service sdp 56 far-end ip-address 10.10.10.1
+/configure service sdp 511 admin-state enable
+/configure service sdp 511 delivery-type mpls
+/configure service sdp 511 ldp true
+/configure service sdp 511 far-end ip-address 10.10.10.1
 ```
 
 ACL configuration on PE1:
@@ -981,45 +593,31 @@ ACL configuration on PE1:
 /configure filter ip-filter "Epipe-ACL" entry 10 action accept
 ```
 
-SAP Ingress QoS configuration on PE1:
-
-```
-/configure qos sap-ingress "CE-ingress-QoS" policy-id 11
-/configure qos sap-ingress "CE-ingress-QoS" queue 2 rate pir 100
-/configure qos sap-ingress "CE-ingress-QoS" queue 2 rate cir 100
-/configure qos sap-ingress "CE-ingress-QoS" dscp cs1 fc "af"
-/configure qos sap-ingress "CE-ingress-QoS" fc "af" queue 2
-/configure qos sap-ingress "CE-ingress-QoS" fc "af" profile in
-```
-
-SAP Egress QoS configuration on PE1:
-
-```
-/configure qos sap-egress "CE-egress-QoS" policy-id 12
-/configure qos sap-egress "CE-egress-QoS" queue 3 rate pir 100
-/configure qos sap-egress "CE-egress-QoS" queue 3 rate cir 100
-/configure qos sap-egress "CE-egress-QoS" fc be queue 3
-/configure qos sap-egress "CE-egress-QoS" fc be dscp in-profile cp31
-/configure qos sap-egress "CE-egress-QoS" fc be dscp out-profile cp31
-/configure qos sap-egress "CE-egress-QoS" fc af queue 3
-/configure qos sap-egress "CE-egress-QoS" fc af dscp in-profile cs4
-/configure qos sap-egress "CE-egress-QoS" fc af dscp out-profile cs4
-```
-
 Epipe configuration on PE1:
 
 ```
-/configure service epipe "CEA1-VLAN100" admin-state enable
-/configure service epipe "CEA1-VLAN100" description "Epipe-CEA1-VLAN100-CEZ1-VLAN100"
-/configure service epipe "CEA1-VLAN100" service-id 10
-/configure service epipe "CEA1-VLAN100" customer "1"
-/configure service epipe "CEA1-VLAN100" spoke-sdp 55:100 { }
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 ingress filter ip "Epipe-ACL"
-/configure service epipe "CEA1-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
+/configure service epipe "Epipe-VLAN100" admin-state enable
+/configure service epipe "Epipe-VLAN100" description "Epipe-CEA1-VLAN100-CEZ1-VLAN100"
+/configure service epipe "Epipe-VLAN100" service-id 10
+/configure service epipe "Epipe-VLAN100" customer "1"
+/configure service epipe "Epipe-VLAN100" spoke-sdp 55:100 { }
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 ingress filter ip "Epipe-ACL"
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 egress qos sap-egress policy-name "CE-egress-QoS"
 ```
 
-Refer to ACL and QoS sections in this guide for the respective ACL and QoS configuration.
+Epipe configuration on PE3:
+
+```
+/configure service epipe "Epipe-VLAN100" admin-state enable
+/configure service epipe "Epipe-VLAN100" description "Epipe-CEA1-VLAN100-CEZ1-VLAN100"
+/configure service epipe "Epipe-VLAN100" service-id 10
+/configure service epipe "Epipe-VLAN100" customer "1"
+/configure service epipe "Epipe-VLAN100" spoke-sdp 511:100 { }
+/configure service epipe "Epipe-VLAN100" sap 1/1/c10/1:100 { }
+```
+
+Refer to QoS sections in this guide for the respective QoS configuration.
 
 **Customer Verfiication**
 
@@ -1045,7 +643,7 @@ rtt min/avg/max/mdev = 5.030/6.805/10.316/2.482 ms
 
 While ping is in progress, check the SAP, ACL and QoS stats.
 
-Refer to the `Common show commands` section in this guide for relevant commands.
+Refer to the `show commands` section in this guide for relevant commands.
 
 # VPLS
 
@@ -1054,6 +652,106 @@ VPLS is a class of virtual private network service that allows the connection of
 A VPLS service provides connectivity between two or more SAPs on one (which is considered a local service) or more (which is considered a distributed service) service routers. The connection appears to be a bridged domain to the customer sites so protocols, including routing protocols, can traverse the VPLS service.
 
 For more details on VPLS, visit [SR OS VPLS Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/virtual-private-lan-service.html).
+
+The vpls topology for this example is shown below:
+
+![image](vpls-topology.jpg)
+
+A VPLS service will be created to establish communication between the 2 clients. RSVP-TE LSP will be used as the tunelling protocol. Refer to `RSVP-TE` section in this guide for relevant LSP configuration.
+
+**Configuration**
+
+CE facing Port configuration on PE1 and PE3:
+
+```
+/configure port 1/1/c10/1 admin-state enable
+/configure port 1/1/c10/1 ethernet mode access
+/configure port 1/1/c10/1 ethernet encap-type dot1q
+/configure port 1/1/c10/1 ethernet mtu 5000
+```
+
+SDP configuration on PE1:
+
+```
+/configure service sdp 520 admin-state enable
+/configure service sdp 520 description "RSVP to PE3"
+/configure service sdp 520 delivery-type mpls
+/configure service sdp 520 far-end ip-address 10.10.10.3
+/configure service sdp 520 lsp "lsp-to-R3" { }
+```
+
+SDP configuration on PE3:
+
+```
+/configure service sdp 521 admin-state enable
+/configure service sdp 521 description "RSVP to PE1"
+/configure service sdp 521 delivery-type mpls
+/configure service sdp 521 far-end ip-address 10.10.10.1
+/configure service sdp 521 lsp "lsp-to-R1" { }
+```
+
+Refer to `RSVP-TE` section in this guide for LSP configuration.
+
+MAC ACL filter configuration on PE1:
+
+In this example, we will use a MAC ACL.
+
+```
+/configure filter mac-filter "VPLS-MAC-Filter" filter-id 1021
+/configure filter mac-filter "VPLS-MAC-Filter" entry 10 match src-mac address aa:c2:ab:00:02:02
+/configure filter mac-filter "VPLS-MAC-Filter" entry 10 match src-mac mask ff:ff:ff:ff:ff:ff
+/configure filter mac-filter "VPLS-MAC-Filter" entry 10 action accept
+```
+
+VPLS service configuration on PE1:
+
+```
+/configure service vpls "VPLS-VLAN200" admin-state enable
+/configure service vpls "VPLS-VLAN200" description "VPLS-CEA-VLAN200-CEZ-VLAN200"
+/configure service vpls "VPLS-VLAN200" service-id 20
+/configure service vpls "VPLS-VLAN200" customer "1"
+/configure service vpls "VPLS-VLAN200" spoke-sdp 520:200 { }
+/configure service vpls "VPLS-VLAN200" sap 1/1/c10/1:200 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service vpls "VPLS-VLAN200" sap 1/1/c10/1:200 ingress filter mac "VPLS-MAC-Filter"
+/configure service vpls "VPLS-VLAN200" sap 1/1/c10/1:200 egress qos sap-egress policy-name "CE-egress-QoS"
+```
+
+VPLS service configuration on PE3:
+
+```
+/configure service vpls "VPLS-VLAN200" admin-state enable
+/configure service vpls "VPLS-VLAN200" description "VPLS-CEA-VLAN200-CEZ-VLAN200"
+/configure service vpls "VPLS-VLAN200" service-id 20
+/configure service vpls "VPLS-VLAN200" customer "1"
+/configure service vpls "VPLS-VLAN200" spoke-sdp 521:200 { }
+/configure service vpls "VPLS-VLAN200" sap 1/1/c10/1:200 { }
+```
+
+**Customer Verfiication**
+
+Login to CEA:
+
+```
+docker exec -it cea bash
+```
+
+Ping CEZ VLAN 200 from CEA:
+
+```
+└──> ping -c 100 -Q 34  192.168.20.2
+PING 192.168.20.2 (192.168.20.2) 56(84) bytes of data.
+64 bytes from 192.168.20.2: icmp_seq=1 ttl=64 time=10.7 ms
+64 bytes from 192.168.20.2: icmp_seq=2 ttl=64 time=5.51 ms
+64 bytes from 192.168.20.2: icmp_seq=3 ttl=64 time=5.44 ms
+
+--- 192.168.20.2 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 99151ms
+rtt min/avg/max/mdev = 4.583/5.901/14.539/1.815 ms
+```
+
+While ping is in progress, check the SAP, ACL and QoS stats.
+
+Refer to the `Common show commands` section in this guide for relevant commands.
 
 
 # VPRN
@@ -1100,34 +798,6 @@ BGP configuration on PE3 to advertise vpn-ipv4 family to PE1:
 /configure router "Base" bgp group "pe" peer-as 64500
 /configure router "Base" bgp neighbor "10.10.10.1" group "pe"
 /configure router "Base" bgp neighbor "10.10.10.1" family vpn-ipv4 true
-```
-
-Verify BGP state on PE1:
-
-```
-A:admin@pe1#  show router bgp summary 
-===============================================================================
- BGP Router ID:10.10.10.1       AS:64500       Local AS:64500      
-===============================================================================
-BGP Admin State         : Up          BGP Oper State              : Up
-Total Peer Groups       : 1           Total Peers                 : 3         
-Total VPN Peer Groups   : 0           Total VPN Peers             : 0         
-Current Internal Groups : 2           Max Internal Groups         : 2         
-Total BGP Paths         : 27          Total Path Memory           : 10032     
-<--snip-->   
-===============================================================================
-BGP Summary
-===============================================================================
-Legend : D - Dynamic Neighbor
-===============================================================================
-Neighbor
-Description
-                   AS PktRcvd InQ  Up/Down   State|Rcv/Act/Sent (Addr Family)
-                      PktSent OutQ
--------------------------------------------------------------------------------       
-10.10.10.3
-                64500      87    0 00h40m35s 0/0/0 (VpnIPv4)
--------------------------------------------------------------------------------
 ```
 
 VPRN ACL configuration on PE1:
@@ -1245,76 +915,6 @@ BLUE VPRN service configuration on PE3:
 /configure service vprn "BLUE" interface "to-cez" { sap 1/1/c10/1:400 }
 ```
 
-To verify VPRN RED route table on PE1:
-
-```
-A:admin@pe1# show router 30 route-table 
-
-===============================================================================
-Route Table (Service: 30)
-===============================================================================
-Dest Prefix[Flags]                            Type    Proto     Age        Pref
-      Next Hop[Interface Name]                                    Metric   
--------------------------------------------------------------------------------
-192.168.30.0/24                               Local   Local     20h57m59s  0
-       to-cea                                                       0
-192.168.31.0/24                               Remote  BGP VPN   00h18m08s  170
-       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
-192.168.31.254/32                             Remote  BGP VPN   00h18m08s  170
-       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
-192.168.40.0/24                               Remote  BGP VPN   00h18m45s  0
-       Local VRF [40:to-cea]                                        0
-192.168.40.254/32                             Remote  BGP VPN   00h18m45s  0
-       Local VRF [40:to-cea]                                        0
-192.168.41.0/24                               Remote  BGP VPN   00h18m08s  170
-       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
-192.168.41.254/32                             Remote  BGP VPN   00h18m08s  170
-       10.10.10.3 (tunneled:SR-ISIS:524292)                         200
--------------------------------------------------------------------------------
-No. of Routes: 7
-Flags: n = Number of times nexthop is repeated
-       B = BGP backup route available
-       L = LFA nexthop available
-       S = Sticky ECMP requested
-===============================================================================
-```
-
-To verify BGP VPN routes on PE1:
-
-```
-A:admin@pe1# show router bgp routes vpn-ipv4
-===============================================================================
- BGP Router ID:10.10.10.1       AS:64500       Local AS:64500      
-===============================================================================
- Legend -
- Status codes  : u - used, s - suppressed, h - history, d - decayed, * - valid
-                 l - leaked, x - stale, > - best, b - backup, p - purge
- Origin codes  : i - IGP, e - EGP, ? - incomplete
-
-===============================================================================
-BGP VPN-IPv4 Routes
-===============================================================================
-Flag  Network                                            LocalPref   MED
-      Nexthop (Router)                                   Path-Id     IGP Cost
-      As-Path                                                        Label
--------------------------------------------------------------------------------
-u*>i  10.10.10.3:64555:192.168.31.0/24                   100         None
-      10.10.10.3                                         None        200
-      No As-Path                                                     524285
-u*>i  10.10.10.3:64555:192.168.31.254/32                 100         0
-      10.10.10.3                                         None        200
-      No As-Path                                                     524285
-u*>i  10.10.10.3:64565:192.168.41.0/24                   100         None
-      10.10.10.3                                         None        200
-      No As-Path                                                     524275
-u*>i  10.10.10.3:64565:192.168.41.254/32                 100         0
-      10.10.10.3                                         None        200
-      No As-Path                                                     524275
--------------------------------------------------------------------------------
-Routes : 4
-===============================================================================
-```
-
 **Customer Verfiication**
 
 Login to CEA:
@@ -1339,7 +939,7 @@ rtt min/avg/max/mdev = 4.360/6.300/14.803/2.373 ms
 
 While ping is in progress, check the SAP, ACL and QoS stats.
 
-Refer to the `Common show commands` section in this guide for relevant commands.
+Refer to the `show commands` section in this guide for relevant commands.
 
 # IES
 
@@ -1442,7 +1042,7 @@ EVPN-VPWS configuration on PE3:
 /configure service epipe "VPWS-VLAN600" bgp-evpn mpls 1 auto-bind-tunnel resolution-filter sr-te true
 ```
 
-Refer to `Show Commands` section for verification commands.
+Refer to `show commands` section for verification commands.
 
 **Customer Verfiication**
 
@@ -1468,7 +1068,7 @@ rtt min/avg/max/mdev = 4.488/5.589/16.327/1.665 ms
 
 While ping is in progress, check the SAP, ACL and QoS stats.
 
-Refer to the `Common show commands` section in this guide for relevant commands.
+Refer to the `show commands` section in this guide for relevant commands.
 
 # EVPN-VPLS with Multihoming
 
@@ -1480,7 +1080,7 @@ EVPN can be used in MPLS networks where PEs are interconnected through any type 
 
 For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
 
-# Show commands
+# show commands
 
 ## Hardware and System
 
@@ -1518,6 +1118,12 @@ To view routing table:
 
 ```
 show router route-table
+```
+
+To view tunnel table:
+
+```
+show router tunnel-table
 ```
 
 ## Port and Interfaces
@@ -1692,348 +1298,284 @@ show router bgp routes evpn ip-prefix
 
 ## LDP
 
-
-## Services
-
-```
-A:admin@pe1# show service id "CEA1-VLAN100" base
-
-===============================================================================
-Service Basic Information
-===============================================================================
-Service Id        : 10                  Vpn Id            : 0
-Service Type      : Epipe               
-MACSec enabled    : no                  
-Name              : CEA1-VLAN100
-Description       : Epipe-CEA1-VLAN100-CEZ1-VLAN100
-Customer Id       : 1                   Creation Origin   : manual
-Last Status Change: 07/15/2025 19:48:09 
-Last Mgmt Change  : 07/15/2025 19:47:39 
-Test Service      : No                  
-Admin State       : Up                  Oper State        : Up
-MTU               : 1514                
-Vc Switching      : False               
-SAP Count         : 1                   SDP Bind Count    : 1
-Per Svc Hashing   : Disabled            Lbl Eth/IP L4 TEID: Disabled
-Ignore MTU Mismat*: Disabled            
-Vxlan Src Tep Ip  : N/A
-Force QTag Fwd    : Disabled            
-Lcl Switch Svc St : sap                 
-Oper Group        : <none>              
- 
--------------------------------------------------------------------------------
-Service Access & Destination Points
--------------------------------------------------------------------------------
-Identifier                               Type         AdmMTU  OprMTU  Adm  Opr
--------------------------------------------------------------------------------
-sap:1/1/c10/1:100                        q-tag        5000    5000    Up   Up
-sdp:55:100 S(10.10.10.3)                 Spok         0       8682    Up   Up
-===============================================================================
-```
-
-**Service SAP Details**
+To verify LDP adjancency:
 
 ```
-A:admin@pe1# show service id "CEA1-VLAN100" sap "1/1/c10/1:100" detail 
-
-===============================================================================
-Service Access Points(SAP)
-===============================================================================
-Service Id         : 10                       
-SAP                : 1/1/c10/1:100            Encap             : q-tag
-Description        : (Not Specified)
-Admin State        : Up                       Oper State        : Up
-Flags              : None
-Multi Svc Site     : None                     
-Last Status Change : 07/15/2025 19:47:54      
-Last Mgmt Change   : 07/15/2025 19:57:23      
-Sub Type           : regular                  
-Dot1Q Ethertype    : 0x8100                   QinQ Ethertype    : 0x8100
-Split Horizon Group: (Not Specified)
- 
-Admin MTU          : 5000                     Oper MTU          : 5000
-Ingr IP Fltr-Id    : 101                      Egr IP Fltr-Id    : n/a
-Ingr Mac Fltr-Id   : n/a                      Egr Mac Fltr-Id   : n/a
-Ingr IPv6 Fltr-Id  : n/a                      Egr IPv6 Fltr-Id  : n/a
-qinq-pbit-marking  : both                     
-Endpoint           : N/A                      
-Egr Agg Rate Limit : max                      
-Q Frame-Based Acct : Disabled                 Limit Unused BW   : Disabled
-Vlan-translation   : None                     
-Qinq-vlan-                                    Qinq-vlan-          
-translation        : None                     translation Ids   : None
- 
-Acct. Pol          : None                     Collect Stats     : Disabled
- 
-Application Profile: None                     
-Transit Policy     : None                     
- 
-Oper Group         : (none)                   Monitor Oper Grp  : (none)
-Host Lockout Plcy  : n/a                      
-Ignore Oper Down   : Disabled                 
-Lag Link Map Prof  : (none)                   
-Cflowd             : Disabled                 
-Bandwidth          : Not-Applicable           
-Oper DCpu Prot Pol : _default-access-policy
-Virtual Port       : (Not Specified)
-
--------------------------------------------------------------------------------
-ETH-CFM SAP specifics
--------------------------------------------------------------------------------
-Tunnel Faults      : n/a                      AIS               : Disabled
-MC Prop-Hold-Timer : n/a                      
-Squelch Levels     : None                     
-Squelch Ctag Levels: None                     
-Collect Lmm Stats  : Disabled                 
-LMM FC Stats       : None                     
-LMM FC In Prof     : None                     
- 
--------------------------------------------------------------------------------
-QOS
--------------------------------------------------------------------------------
-Ingress qos-policy : 11                       Egress qos-policy : 12
-Ingress FP QGrp    : (none)                   Egress Port QGrp  : (none)
-Ing FP QGrp Inst   : (none)                   Egr Port QGrp Inst: (none)
-Ing ip-match tag   : none                     Ing ipv6-match tag: none
-I. Sched Pol       : (Not Specified)
-E. Sched Pol       : (Not Specified)
-I. Policer Ctl Pol : (Not Specified)
-E. Policer Ctl Pol : (Not Specified)
-I. QGrp Redir. List: (Not Specified)
-E. QGrp Redir. List: (Not Specified)
-Hw Agg Shaper Q Set: No                       
-Hw Agg Shpr QSet Sz: 0                        
-Hw Agg Shpr In-Use : No                       
-Latency Budget     : 0 us                     
-
--------------------------------------------------------------------------------
-Sap Aggregate Stats
--------------------------------------------------------------------------------
-                        Packets                 Octets
-Ingress
-Aggregate Offered     : 509                     51742                   
-Aggregate Forwarded   : 509                     51742                   
-Aggregate Dropped     : 0                       0                       
-
-Egress
-Aggregate Forwarded   : 509                     52260                   
-Aggregate Dropped     : 0                       0                       
--------------------------------------------------------------------------------
-Sap Statistics
--------------------------------------------------------------------------------
-Last Cleared Time     : N/A
-
-                        Packets                 Octets
-CPM Ingress           : 0                       0                        
-
-Forwarding Engine Stats
-Dropped               : 0                       0                        
-Received Valid        : 509                     51742                    
-Off. HiPrio           : 0                       0                        
-Off. LowPrio          : 509                     51742                    
-Off. Uncolor          : 0                       0                        
-Off. Managed          : 0                       0                        
-
-Queueing Stats(Ingress QoS Policy 11)
-Dro. HiPrio           : 0                       0                        
-Dro. LowPrio          : 0                       0                        
-For. InProf           : 0                       0                        
-For. OutProf          : 509                     51742                    
-
-Queueing Stats(Egress QoS Policy 12)
-Dro. In/InplusProf    : 0                       0                        
-Dro. Out/ExcProf      : 0                       0                        
-For. In/InplusProf    : 0                       0                        
-For. Out/ExcProf      : 509                     52260                    
--------------------------------------------------------------------------------
-Sap per Queue stats
--------------------------------------------------------------------------------
-                        Packets                 Octets
- 
-Ingress Queue 1 (Unicast) (Priority)
-Off. HiPrio           : 0                       0                        
-Off. LowPrio          : 39                      2006                     
-Dro. HiPrio           : 0                       0                        
-Dro. LowPrio          : 0                       0                        
-For. InProf           : 0                       0                        
-For. OutProf          : 39                      2006                     
- 
-Ingress Queue 2 (Unicast) (Priority)
-Off. HiPrio           : 0                       0                        
-Off. LowPrio          : 467                     49502                    
-Dro. HiPrio           : 0                       0                        
-Dro. LowPrio          : 0                       0                        
-For. InProf           : 0                       0                        
-For. OutProf          : 467                     49502                    
- 
-Egress Queue 1
-For. In/InplusProf    : 0                       0                        
-For. Out/ExcProf      : 0                       0                        
-Dro. In/InplusProf    : 0                       0                        
-Dro. Out/ExcProf      : 0                       0                        
- 
-Egress Queue 3
-For. In/InplusProf    : 0                       0                        
-For. Out/ExcProf      : 506                     52026                    
-Dro. In/InplusProf    : 0                       0                        
-Dro. Out/ExcProf      : 0                       0                        
-===============================================================================
+show router ldp discovery
 ```
 
-**Service SDP details**
+To view LDP sessions:
 
 ```
-A:admin@pe1# show service id "CEA1-VLAN100" sdp "55:100" detail 
-
-===============================================================================
-Service Destination Point (Sdp Id : 55:100) Details
-===============================================================================
--------------------------------------------------------------------------------
- Sdp Id 55:100  -(10.10.10.3)
--------------------------------------------------------------------------------
-Description     : (Not Specified)
-SDP Id             : 55:100                   Type              : Spoke
-Spoke Descr     : (Not Specified)
-VC Type            : Ether                    VC Tag            : n/a
-Admin Path MTU     : 0                        Oper Path MTU     : 8682
-Delivery           : MPLS                     
-Far End            : 10.10.10.3               Tunnel Far End    : 
-Oper Tunnel Far End: 10.10.10.3               
-LSP Types          : LDP                      
-Hash Label         : Disabled                 Hash Lbl Sig Cap  : Disabled
-Oper Hash Label    : Disabled                 
-Entropy Label      : Disabled                 
- 
-Admin State        : Up                       Oper State        : Up
-MinReqd SdpOperMTU : 1514                     
-ADV Service MTU    : None                     
-Acct. Pol          : None                     Collect Stats     : Disabled
-Ingress Label      : 524280                   Egress Label      : 524283
-Ingr Mac Fltr-Id   : n/a                      Egr Mac Fltr-Id   : n/a
-Ingr IP Fltr-Id    : n/a                      Egr IP Fltr-Id    : n/a
-Ingr IPv6 Fltr-Id  : n/a                      Egr IPv6 Fltr-Id  : n/a
-Admin ControlWord  : Not Preferred            Oper ControlWord  : False
-Admin BW(Kbps)     : 0                        Oper BW(Kbps)     : 0
-BFD Template       : None
-BFD-Enabled        : no                       BFD-Encap         : ipv4
-BFD Fail Action    : none                     BFD Oper State    : notConfigured
-BFD WaitForUpTimer : 0 secs                   
-BFD Time Remain    : 0 secs                   
-Last Status Change : 07/15/2025 19:48:09      Signaling         : TLDP
-Last Mgmt Change   : 07/15/2025 19:47:39      
-Endpoint           : N/A                      Precedence        : 4
-ICB                : False                    
-PW Status Sig      : Enabled                  
-Force Vlan-Vc      : Disabled                 Force Qinq-Vc     : none
-Class Fwding State : Down                     
-Flags              : None
-Local Pw Bits      : None
-Peer Pw Bits       : None
-Peer Fault Ip      : None                     
-Peer Vccv CV Bits  : lspPing bfdFaultDet
-Peer Vccv CC Bits  : mplsRouterAlertLabel
- 
-Application Profile: None                     
-Transit Policy     : None                     
-Standby Sig Slave  : False                    
-Block On Peer Fault: False                    
-Use SDP B-MAC      : False                    
-
-Ingress Qos Policy : (none)                   Egress Qos Policy : (none)
-Ingress FP QGrp    : (none)                   Egress Port QGrp  : (none)
-Ing FP QGrp Inst   : (none)                   Egr Port QGrp Inst: (none)
- 
-KeepAlive Information :
-Admin State        : Disabled                 Oper State        : Disabled
-Hello Time         : 10                       Hello Msg Len     : 0
-Max Drop Count     : 3                        Hold Down Time    : 10
- 
-Statistics            :
-I. Fwd. Pkts.      : 509                      I. Dro. Pkts.     : 0
-I. Fwd. Octs.      : 47670                    I. Dro. Octs.     : 0
-E. Fwd. Pkts.      : 509                      E. Fwd. Octets    : 47670
-
--------------------------------------------------------------------------------
-Control Channel Status
--------------------------------------------------------------------------------
-PW Status          : disabled                 Refresh Timer     : <none>
-Peer Status Expire : false                    
-Request Timer      : <none>                   
-Acknowledgement    : false                    
-
--------------------------------------------------------------------------------
-ETH-CFM SDP-Bind specifics
--------------------------------------------------------------------------------
-Squelch Levels     : None                     
-Squelch Ctag Levels: None                     
-Collect Lmm Stats  : Disabled                 
-LMM FC Stats       : None                     
-LMM FC In Prof     : None                     
- 
--------------------------------------------------------------------------------
-LDP Information :
--------------------------------------------------------------------------------
-LDP LSP Id         : 65541                    
- 
--------------------------------------------------------------------------------
-RSVP/Static LSPs
--------------------------------------------------------------------------------
-Associated LSP List :
-No LSPs Associated
- 
--------------------------------------------------------------------------------
-Class-based forwarding :
--------------------------------------------------------------------------------
-Class forwarding   : Disabled                 EnforceDSTELspFc  : Disabled
-Default LSP        : Uknwn                    
-Multicast LSP      : None                     
-
-===============================================================================
-FC Mapping Table
-===============================================================================
-FC Name             LSP Name
--------------------------------------------------------------------------------
-No FC Mappings
- 
--------------------------------------------------------------------------------
-Segment Routing
--------------------------------------------------------------------------------
-ISIS               : disabled                 
-OSPF               : disabled                 
-TE-LSP             : disabled                 
--------------------------------------------------------------------------------
-Number of SDPs : 1
--------------------------------------------------------------------------------
-===============================================================================
+show router ldp session
 ```
 
-**ACL Stats**
+To view T-LDP sessions:
 
 ```
-A:admin@pe1# show filter ip "Epipe-ACL" counters 
-
-===============================================================================
-IP Filter
-===============================================================================
-Filter Id           : 101                          Applied        : Yes
-Scope               : Template                     Def. Action    : Drop
-Type                : Normal                       
-Shared Policer      : Off                          
-System filter       : Unchained                    
-Radius Ins Pt       : n/a                          
-CrCtl. Ins Pt       : n/a                          
-RadSh. Ins Pt       : n/a                          
-PccRl. Ins Pt       : n/a                          
-Entries             : 1                            
-Description         : (Not Specified)
-Filter Name         : Epipe-ACL
--------------------------------------------------------------------------------
-Filter Match Criteria : IP
--------------------------------------------------------------------------------
-Entry               : 10
-Ing. Matches        : 467 pkts (49502 bytes)
-Egr. Matches        : 0 pkts
- 
-===============================================================================
+show router ldp targ-peer
 ```
+
+To view LDP bindings:
+
+```
+show router ldp bindings
+```
+
+To view service label bindings:
+
+```
+show router ldp bindings services service-id "Epipe-VLAN100"
+```
+
+## RSVP-TE
+
+To verify MPLS interface status:
+
+```
+show router mpls interface
+```
+
+To verify RSVP interface status:
+
+```
+show router rsvp interface
+```
+
+To verify LSP status:
+
+```
+show router mpls lsp
+```
+
+To verify LSP path:
+
+```
+show router mpls lsp "lsp-to-R3" path detail
+```
+
+## Segment Routing
+
+To verify SR-MPLS label allocation:
+
+```
+show router mpls-labels summary
+```
+
+To view SR-MPLS tunnels and labels:
+
+```
+tools dump router segment-routing tunnel
+```
+
+## SR-TE
+
+To verify SR-TE LSP status:
+
+```
+show router mpls sr-te-lsp
+```
+
+To verify SR-TE LSP path:
+
+```
+show router mpls sr-te-lsp "lsp-sr-te-R3" path detail
+```
+
+## ACL
+
+To view IPv4 ACL status and statistics:
+
+```
+show filter ip "Epipe-ACL"
+```
+
+To verify IPv4 ACL filter associations:
+
+```
+show filter ip "Epipe-ACL" associations
+```
+
+To view MAC ACL status and statistics:
+
+```
+show filter mac "VPLS-MAC-Filter"
+```
+
+## QoS
+
+To view SAP ingress policy details:
+
+```
+show qos sap-ingress "CE-ingress-QoS" detail
+```
+
+To view SAP egress policy details:
+
+```
+show qos sap-egress "CE-egress-QoS" detail
+```
+
+To view SAP QoS statistics:
+
+```
+show service id "Epipe-VLAN100" sap "1/1/c10/1:100" stats
+```
+
+## Services General
+
+To view list of all services:
+
+```
+show service service-using
+```
+
+To view list of all SAPs:
+
+```
+show service sap-using
+```
+
+To view list of SDPs and their status;
+
+```
+show service sdp
+```
+
+To view list of SDPs binded to a service:
+
+```
+show service sdp-using
+```
+
+To view status of a service:
+
+```
+show service id "Epipe-VLAN100" base
+```
+
+To view details of a service:
+
+```
+show service id "Epipe-VLAN100" all
+```
+
+To view service SAP stats:
+
+```
+show service id "Epipe-VLAN100" sap "1/1/c10/1:100" stats
+```
+
+## Epipe
+
+To view Epipe service status:
+
+```
+show service id "Epipe-VLAN100" base
+```
+
+To view Epipe service details:
+
+```
+show service id "Epipe-VLAN100" all
+```
+
+To view Epipe SAP stats:
+
+```
+show service id "Epipe-VLAN100" sap "1/1/c10/1:100" stats
+```
+
+## VPLS
+
+To view VPLS service status:
+
+```
+show service id "VPLS-VLAN200" base
+```
+
+To view VPLS service details:
+
+```
+show service id "VPLS-VLAN200" all
+```
+
+To view VPLS SAP stats:
+
+```
+show service id "VPLS-VLAN200" sap "1/1/c10/1:200" stats
+```
+
+To view VPLS MAC FDB table:
+
+```
+show service id "VPLS-VLAN200" fdb detail
+```
+
+## VPRN
+
+To view VPRN service status:
+
+```
+show service id "RED" base
+```
+
+To view VPRN service details:
+
+```
+show service id "RED" all
+```
+
+To view VPRN SAP stats:
+
+```
+show service id "RED" sap "1/1/c10/1:300" stats
+```
+
+To view VPRN route table:
+
+```
+show router service-name "RED" route-table
+```
+
+To view VPN-IPv4 routes:
+
+```
+show router bgp routes vpn-ipv4
+```
+
+## IES
+
+
+## EVPN-VPWS
+
+To view VPWS service status:
+
+```
+show service id "VPWS-VLAN600" base
+```
+
+To view VPWS service details:
+
+```
+show service id "VPWS-VLAN600" all
+```
+
+To view VPWS SAP stats:
+
+```
+show service id "VPWS-VLAN600" sap "1/1/c10/1:300" stats
+```
+
+To view EVPN Route Type 1 with details:
+
+```
+show router bgp routes evpn auto-disc detail
+```
+
+## EVPN-VPLS
+
+
+
+
 
