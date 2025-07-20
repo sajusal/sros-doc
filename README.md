@@ -1541,6 +1541,92 @@ An IES service will be created to establish communication between the Clients. T
 **Note:** Routes needs to be advertised from PE1 to PE3 using any IGP. Here in this example we are using ISIS with export policy `export-ies` to export the IES routes to the global routing table.
 
 
+**Verification**
+
+1. To verify the IES service on PE1:
+
+```
+A:admin@pe1# show service id "500" base
+
+===============================================================================
+Service Basic Information
+===============================================================================
+Service Id        : 500                 Vpn Id            : 0
+Service Type      : IES
+MACSec enabled    : no
+Name              : 500
+Description       : (Not Specified)
+Customer Id       : 1                   Creation Origin   : manual
+Last Status Change: 07/20/2025 00:28:40
+Last Mgmt Change  : 07/20/2025 00:13:28
+Admin State       : Up                  Oper State        : Up
+SAP Count         : 0                   SDP Bind Count    : 0
+
+-------------------------------------------------------------------------------
+Service Access & Destination Points
+-------------------------------------------------------------------------------
+Identifier                               Type         AdmMTU  OprMTU  Adm  Opr
+-------------------------------------------------------------------------------
+vpls:VPLS-501                            rvpls        0       1500    Up   Up
+===============================================================================
+```
+
+The Type: rvpls indicates that this is a Routed VPLS service and connected to VPLS 501
+
+2. Routing Table for IES service on PE1:
+
+```
+A:admin@pe1# show router interface
+
+===============================================================================
+Interface Table (Router: Base)
+===============================================================================
+Interface-Name                   Adm       Opr(v4/v6)  Mode    Port/SapId
+   IP-Address                                                  PfxState
+-------------------------------------------------------------------------------
+To-P1                            Up        Up/Down     Network 1/1/c1/1
+   172.16.10.0/31                                              n/a
+To-P2                            Up        Up/Down     Network 1/1/c2/1
+   172.16.10.8/31                                              n/a
+system                           Up        Up/Down     Network system
+   10.10.10.1/32                                               n/a
+to-CEA                           Up        Up/Down     IES     rvpls
+   192.168.50.1/30                                             n/a
+-------------------------------------------------------------------------------
+Interfaces : 4
+===============================================================================
+
+
+A:admin@pe1# show router route-table  192.168.50.1/30
+
+===============================================================================
+Route Table (Router: Base)
+===============================================================================
+Dest Prefix[Flags]                            Type    Proto     Age        Pref
+      Next Hop[Interface Name]                                    Metric
+-------------------------------------------------------------------------------
+192.168.50.0/30                               Local   Local     15h04m22s  0
+       to-CEA                                                       0
+-------------------------------------------------------------------------------
+No. of Routes: 1
+Flags: n = Number of times nexthop is repeated
+       B = BGP backup route available
+       L = LFA nexthop available
+       S = Sticky ECMP requested
+===============================================================================
+```
+
+3. Traffic to far-end CEZ
+
+```
+[x]─[cea]─[~]
+└──> ping 192.168.60.2
+PING 192.168.60.2 (192.168.60.2) 56(84) bytes of data.
+64 bytes from 192.168.60.2: icmp_seq=1 ttl=61 time=25.3 ms
+64 bytes from 192.168.60.2: icmp_seq=2 ttl=61 time=4.76 ms
+64 bytes from 192.168.60.2: icmp_seq=3 ttl=61 time=5.36 ms
+```
+
 
 For more details on IES, visit [SR OS IES Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/internet-enhanced-service.html).
 
