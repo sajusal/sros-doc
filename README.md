@@ -11,7 +11,7 @@ The following services are covered in this guide:
 - [VPRN](#vpls)
 - [IES](#ies)
 - EVPN-VPWS
-- EVPN-MPLS
+- [EVPN-MPLS](#EVPN-VPLS-with-Multihoming)
 
 A summary of what this guide provides is shown below.
 
@@ -1055,7 +1055,7 @@ A VPLS service provides connectivity between two or more SAPs on one (which is c
 
 The VPLS topology for this example is shown below:
 
-![image](./vpls-topology.png)
+![image](./topologies/vpls.png)
 
 Layer 2 VPLS will be created to establish communication between the Clients on either sides. LDP will be used as the tunneling protocol which eventually is used to build SDPs.
 
@@ -1758,6 +1758,165 @@ EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, 
 EVPN-MPLS is supported where PEs are connected by any type of MPLS tunnel. EVPN-MPLS is generally used as an evolution for VPLS services in the WAN, and Data Center Interconnect is one of the main applications.
 
 EVPN can be used in MPLS networks where PEs are interconnected through any type of tunnel, including RSVP-TE, Segment-Routing TE, LDP, BGP, Segment Routing IS-IS, Segment Routing OSPF, RIB-API, MPLS-forwarding-policy, SR-Policy, or MPLSoUDP. 
+
+
+![image](./topologies/l2_evpn.png)
+
+**Configuration**
+
+To configure EVPN-VPLS with multihoming, we will set up two PEs (PE1 and PE2) connected to a CE (CEB) and the far-end we have similar setup with PE3, PE4 and CEY (not neccessaily you need both ends). 
+
+To configure the EVPN-VPLS service, we will use 3 simple steps:
+
+**Step-1: LAG**. Configure LAG with LACP on PE nodes, which will be used to connect to the CE.
+
+**Step-2: Ethernet-Segment**. Configure the Ethernet-Segments on the PEs to enable multihoming with ESI and associated LAGs.
+
+**Step-3: VPLS**. Configure VPLS service with SAP Lag associated and bgp-evpn enabled, Route-destinguishers and Route-targets.
+
+
+
+1. Configure the LAG on PE1 and PE2:
+
+```
+/configure lag "lag-10" admin-state enable
+/configure lag "lag-10" encap-type dot1q
+/configure lag "lag-10" mode access
+/configure lag "lag-10" lacp mode active
+/configure lag "lag-10" lacp system-id 00:00:00:00:01:02
+/configure lag "lag-10" lacp administrative-key 32769
+/configure lag "lag-10" port 1/1/c11/1 { }
+```
+
+Confiure the LAG on PE3 and PE4, Make sure to use a different system-id:
+
+```
+/configure lag "lag-10" admin-state enable
+/configure lag "lag-10" encap-type dot1q
+/configure lag "lag-10" mode access
+/configure lag "lag-10" lacp mode active
+/configure lag "lag-10" lacp system-id 00:00:00:00:03:04
+/configure lag "lag-10" lacp administrative-key 32769
+/configure lag "lag-10" port 1/1/c11/1 { }
+```
+
+2. Configure the Ethernet-Segment on PE1 and PE2
+
+```
+/configure service system bgp evpn ethernet-segment "es-1" admin-state enable
+/configure service system bgp evpn ethernet-segment "es-1" esi 0x00121212121212000101
+/configure service system bgp evpn ethernet-segment "es-1" multi-homing-mode all-active
+/configure service system bgp { evpn ethernet-segment "es-1" association lag "lag-10" }
+```
+
+Configure the Ethernet-Segment on PE3 and PE4, Make sure to use a different ESI:
+
+```
+/configure service system bgp evpn ethernet-segment "es-1" admin-state enable
+/configure service system bgp evpn ethernet-segment "es-1" esi 0x00121212121212000103
+/configure service system bgp evpn ethernet-segment "es-1" multi-homing-mode all-active
+/configure service system bgp { evpn ethernet-segment "es-1" association lag "lag-10" }
+```
+
+
+3. Configure the VPLS service on PE1 and PE2:
+
+```
+/configure service vpls "VPLS 700" admin-state enable
+/configure service vpls "VPLS 700" service-id 700
+/configure service vpls "VPLS 700" customer "1"
+/configure service vpls "VPLS 700" routed-vpls { }
+/configure service vpls "VPLS 700" bgp 1 route-distinguisher "64500:1"
+/configure service vpls "VPLS 700" bgp 1 route-target export "target:64500:1"
+/configure service vpls "VPLS 700" bgp 1 route-target import "target:64500:1"
+/configure service vpls "VPLS 700" bgp-evpn evi 1
+/configure service vpls "VPLS 700" bgp-evpn mpls 1 admin-state enable
+/configure service vpls "VPLS 700" bgp-evpn mpls 1 ingress-replication-bum-label true
+/configure service vpls "VPLS 700" sap lag-10:700 { }
+/configure service vpls "VPLS 700" bgp-evpn mpls 1 auto-bind-tunnel resolution any
+```
+
+Configurations on PE3 and PE4, Make sure to use a different/same Route-Distinguisher, but same Route-Targets:
+
+```
+/configure service vpls "VPLS 700" admin-state enable
+/configure service vpls "VPLS 700" service-id 700
+/configure service vpls "VPLS 700" customer "1"
+/configure service vpls "VPLS 700" routed-vpls { }
+/configure service vpls "VPLS 700" bgp 1 route-distinguisher "64500:1"
+/configure service vpls "VPLS 700" bgp 1 route-target export "target:64500:1"
+/configure service vpls "VPLS 700" bgp 1 route-target import "target:64500:1"
+/configure service vpls "VPLS 700" bgp-evpn evi 1
+/configure service vpls "VPLS 700" bgp-evpn mpls 1 admin-state enable
+/configure service vpls "VPLS 700" bgp-evpn mpls 1 ingress-replication-bum-label true
+/configure service vpls "VPLS 700" bgp-evpn mpls 1 auto-bind-tunnel resolution any
+/configure service vpls "VPLS 700" sap lag-10:700 { }
+```
+
+*Notes:*
+
+a. Under BGP Instance 1, Route-Distinguisher</br>
+b. Under BGP Instance 1, Route-Targets</br>
+c. Under BGP-EVPN, Associate the EVI</br>
+d. Under BGP-EVPN, Define the underlying Transport, in this example we are using MPLS.</br>
+e. Under BGP-EVPN, Associate SAP for multi-homing.</br>
+
+
+
+**Verification**
+
+```
+A:admin@pe1# show service id "VPLS 700" fdb detail
+
+===============================================================================
+Forwarding Database, Service 700
+===============================================================================
+ServId     MAC               Source-Identifier       Type     Last Change
+            Transport:Tnl-Id                         Age
+-------------------------------------------------------------------------------
+700        00:00:00:00:00:a1 sap:lag-10:700          Evpn     07/21/25 16:43:38
+700        00:00:00:00:00:b2 eES:                    Evpn     07/21/25 16:43:43
+                             00:12:12:12:12:12:12:00:01:03
+-------------------------------------------------------------------------------
+No. of MAC Entries: 2
+-------------------------------------------------------------------------------
+Legend:L=Learned O=Oam P=Protected-MAC C=Conditional S=Static Lf=Leaf T=Trusted
+===============================================================================
+```
+
+```
+A:admin@pe1# show service id "VPLS 700" evpn-mpls esi esi-1 00:12:12:12:12:12:12:00:01:03
+
+===============================================================================
+BGP EVPN-MPLS Ethernet Segment Dest (Instance: 1)
+===============================================================================
+Eth SegId                       Num. Macs               Last Update
+-------------------------------------------------------------------------------
+00:12:12:12:12:12:12:00:01:03   1                       07/21/2025 16:43:43
+===============================================================================
+
+===============================================================================
+BGP EVPN-MPLS Dest TEP Info (Instance 1)
+===============================================================================
+TEP Address                             Egr Label         Transport:Tnl-  Oper
+                                                          Id              State
+-------------------------------------------------------------------------------
+10.10.10.3                              524286            rsvp:1          Up
+-------------------------------------------------------------------------------
+Number of entries: 1
+-------------------------------------------------------------------------------
+===============================================================================
+
+===============================================================================
+BGP EVPN-MPLS Dest TEP Info (Instance 2)
+===============================================================================
+TEP Address                             Egr Label         Transport:Tnl-  Oper
+                                                          Id              State
+-------------------------------------------------------------------------------
+No Matching Entries
+===============================================================================
+```
+
 
 For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
 

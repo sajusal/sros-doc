@@ -53,7 +53,11 @@ topology:
       kind: linux
       mgmt-ipv4: 172.10.10.11
       mgmt-ipv6: 2001:172:10:10::11
-
+      binds:
+        - configs/client-ceb.sh:/home/user/client-ceb.sh
+      exec:
+        - sudo chmod 777 /home/user/client-ceb.sh
+        - sudo /home/user/client-ceb.sh
     cez:
       kind: linux
       mgmt-ipv4: 172.10.10.12
@@ -67,6 +71,11 @@ topology:
       kind: linux
       mgmt-ipv4: 172.10.10.13
       mgmt-ipv6: 2001:172:10:10::13
+      binds:
+        - configs/client-cey.sh:/home/user/client-cey.sh
+      exec:
+        - sudo chmod 777 /home/user/client-cey.sh
+        - sudo /home/user/client-cey.sh
 
   links:
     # pe-p links
