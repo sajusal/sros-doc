@@ -68,6 +68,7 @@ topology:
         - ip addr add 192.168.50.1/24 dev eth1.500
         - ip link set dev eth1.500 address aa:c5:ab:00:05:05
         - ip link set dev eth1.500 up
+        - ip route add 192.168.51.0/24 via 192.168.50.254
         - ip link add name eth1.600 link eth1 type vlan id 600
         - ip addr add 192.168.60.1/24 dev eth1.600
         - ip link set dev eth1.600 address aa:c6:ab:00:06:06
@@ -108,9 +109,10 @@ topology:
         - ip link set dev eth1.400 up
         - ip route add 192.168.40.0/24 via 192.168.41.254
         - ip link add name eth1.500 link eth1 type vlan id 500
-        - ip addr add 192.168.50.2/24 dev eth1.500
+        - ip addr add 192.168.51.1/24 dev eth1.500
         - ip link set dev eth1.500 address ab:c5:ab:00:05:05
         - ip link set dev eth1.500 up
+        - ip route add 192.168.50.0/24 via 192.168.51.254
         - ip link add name eth1.600 link eth1 type vlan id 600
         - ip addr add 192.168.60.2/24 dev eth1.600
         - ip link set dev eth1.600 address ab:c6:ab:00:06:06
