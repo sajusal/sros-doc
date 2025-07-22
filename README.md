@@ -18,7 +18,7 @@ The following services are covered in this guide:
 - [EVPN-VPWS](#EVPN-VPWS)
 - [EVPN-MPLS](#EVPN-MPLS-with-Multihoming)
 
-A list of [show commands](show-commands) is also provided in this guide.
+A list of [show commands](#show-commands) is also provided in this guide.
 
 A summary of what this guide provides is shown below.
 
