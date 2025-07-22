@@ -11,12 +11,12 @@ All configurations are in MD-CLI flat format. Reference chassis is 7750 SR-1-24D
 
 The following services are covered in this guide:
 
-- Epipe
-- VPLS
-- VPRN
-- IES
-- EVPN-VPWS
-- EVPN-MPLS
+- [Epipe](#Epipe)
+- [VPLS](#VPLS)
+- [VPRN](#VPRN)
+- [IES](#IES)
+- [EVPN-VPWS](#EVPN-VPWS)
+- [EVPN-MPLS](#EVPN-MPLS)
 
 A summary of what this guide provides is shown below.
 
@@ -954,7 +954,124 @@ IES allows IP interfaces to participate in the same routing instance used for se
 
 For more details on IES, visit [SR OS IES Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-3-services/internet-enhanced-service.html).
 
+The IES topology for this example is shown below:
 
+![image](ies-topology.png)
+
+An IES service will be created to establish communication between the Layer 2 Clients. The routes are exchanged from the global routing table to the IES service. Routed VPLS or rvpls (commonly called IRB) is configured towards the customer to collect the traffic and forward it to the IES service. The rvpls service is configured with a SAP that acts as the access point.
+
+To connect Layer 3 clients, a direct Layer 3 interface can be created facing the Layer 3 client.
+
+**Configuration**
+
+CE facing Port configuration on PE1 and PE3:
+
+```
+/configure port 1/1/c10/1 admin-state enable
+/configure port 1/1/c10/1 ethernet mode access
+/configure port 1/1/c10/1 ethernet encap-type dot1q
+/configure port 1/1/c10/1 ethernet mtu 5000
+```
+
+VPLS SAP IPv4 filter configuration on PE1:
+
+```
+/configure filter ip-filter "RVPLS-ACL" filter-id 105
+/configure filter ip-filter "RVPLS-ACL" entry 10 match protocol icmp
+/configure filter ip-filter "RVPLS-ACL" entry 10 match dst-ip address 192.168.51.1
+/configure filter ip-filter "RVPLS-ACL" entry 10 match dst-ip mask 255.255.255.255
+/configure filter ip-filter "RVPLS-ACL" entry 10 action accept
+```
+
+VPLS configuration on PE1:
+
+```
+/configure service vpls "RVPLS-VLAN500" service-id 50
+/configure service vpls "RVPLS-VLAN500" customer "1"
+/configure service vpls "RVPLS-VLAN500" admin-state enable
+/configure service vpls "RVPLS-VLAN500" routed-vpls { }
+/configure service vpls "RVPLS-VLAN500" sap 1/1/c10/1:500 ingress qos sap-ingress policy-name "CE-ingress-QoS"
+/configure service vpls "RVPLS-VLAN500" sap 1/1/c10/1:500 ingress filter ip "RVPLS-ACL"
+/configure service vpls "RVPLS-VLAN500" sap 1/1/c10/1:500 egress qos sap-egress policy-name "CE-egress-QoS"
+```
+
+VPLS configuration on PE3:
+
+```
+/configure service vpls "RVPLS-VLAN500" service-id 50
+/configure service vpls "RVPLS-VLAN500" customer "1"
+/configure service vpls "RVPLS-VLAN500" admin-state enable
+/configure service vpls "RVPLS-VLAN500" routed-vpls { }
+/configure service vpls "RVPLS-VLAN500" sap 1/1/c10/1:500 { }
+```
+
+IES configuration on PE1:
+
+```
+/configure service ies "IES-500" admin-state enable
+/configure service ies "IES-500" service-id 51
+/configure service ies "IES-500" customer "1"
+/configure service ies "IES-500" interface "to-CEA-VLAN500" { vpls "RVPLS-VLAN500" }
+/configure service ies "IES-500" interface "to-CEA-VLAN500" ipv4 primary address 192.168.50.254
+/configure service ies "IES-500" interface "to-CEA-VLAN500" ipv4 primary prefix-length 24
+```
+
+IES configuration on PE3:
+
+```
+/configure service ies "IES-500" admin-state enable
+/configure service ies "IES-500" service-id 51
+/configure service ies "IES-500" customer "1"
+/configure service ies "IES-500" interface "to-CEZ-VLAN500" { vpls "RVPLS-VLAN500" }
+/configure service ies "IES-500" interface "to-CEZ-VLAN500" ipv4 primary address 192.168.51.254
+/configure service ies "IES-500" interface "to-CEZ-VLAN500" ipv4 primary prefix-length 24
+```
+
+To establish reachability between the client subnets in the global routing table, we will create a static route on PE1 and PE3 that will resolve to a SR-ISIS tunnel.
+
+Static route on PE1:
+
+```
+/configure router "Base" static-routes route 192.168.51.0/24 route-type unicast indirect 10.10.10.3 admin-state enable
+/configure router "Base" static-routes route 192.168.51.0/24 route-type unicast indirect 10.10.10.3 tunnel-next-hop resolution filter
+/configure router "Base" static-routes route 192.168.51.0/24 route-type unicast indirect 10.10.10.3 tunnel-next-hop resolution-filter sr-isis true
+```
+
+Static route on PE3:
+
+```
+/configure router "Base" static-routes route 192.168.50.0/24 route-type unicast indirect 10.10.10.1 admin-state enable
+/configure router "Base" static-routes route 192.168.50.0/24 route-type unicast indirect 10.10.10.1 tunnel-next-hop resolution filter
+/configure router "Base" static-routes route 192.168.50.0/24 route-type unicast indirect 10.10.10.1 tunnel-next-hop resolution-filter sr-isis true
+```
+
+Refer to `show commands` section for verification commands.
+
+**Customer Verfiication**
+
+Login to CEA:
+
+```
+docker exec -it cea bash
+```
+
+Ping CEZ VLAN 600 from CEA:
+
+```
+└──> ping -c 100 -Q 34 192.168.51.1
+PING 192.168.51.1 (192.168.51.1) 56(84) bytes of data.
+64 bytes from 192.168.51.1: icmp_seq=1 ttl=61 time=17.8 ms
+64 bytes from 192.168.51.1: icmp_seq=2 ttl=61 time=9.91 ms
+64 bytes from 192.168.51.1: icmp_seq=3 ttl=61 time=5.03 ms
+
+--- 192.168.51.1 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 99142ms
+rtt min/avg/max/mdev = 4.955/7.436/17.811/3.667 ms
+```
+
+While ping is in progress, check the SAP, ACL and QoS stats.
+
+Refer to the `show commands` section in this guide for relevant commands.
 
 # EVPN-VPWS
 
@@ -1075,7 +1192,7 @@ While ping is in progress, check the SAP, ACL and QoS stats.
 
 Refer to the `show commands` section in this guide for relevant commands.
 
-# EVPN-VPLS with Multihoming
+# EVPN-MPLS with Multihoming
 
 EVPN is an IETF technology as defined in RFC 7432, BGP MPLS-Based Ethernet VPN, that uses a specific BGP address family and allows VPLS services to be operated as IP-VPNs, where the MAC addresses and the information to set up the flooding trees are distributed by BGP.
 
@@ -1083,7 +1200,157 @@ EVPN-MPLS is supported where PEs are connected by any type of MPLS tunnel. EVPN-
 
 EVPN can be used in MPLS networks where PEs are interconnected through any type of tunnel, including RSVP-TE, Segment-Routing TE, LDP, BGP, Segment Routing IS-IS, Segment Routing OSPF, RIB-API, MPLS-forwarding-policy, SR-Policy, or MPLSoUDP. 
 
-For more details on EVPN-VPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
+For more details on EVPN-MPLS, visit [SR OS EVPN Documentation](https://documentation.nokia.com/sr/25-3/7x50-shared/layer-2-services-evpn/ethernet-virtual-private-networks.html).
+
+The EVPN-MPLS topology for this example is shown below:
+
+![image](l2-evpn-topology.png)
+
+The client on either side is multi-homed to 2 PE devices. An EVPN-MPLS service will be created to establish communication between the Clients. SR-ISIS will be used as the transport protocol. Refer to `Segment Routing` section in this guide for the relevant SR-ISIS configuration.
+
+**Configuration**
+
+CE facing Port configuration on PE1, PE2, PE3 and PE4:
+
+```
+/configure port 1/1/c11/1 admin-state enable
+/configure port 1/1/c11/1 ethernet mode access
+```
+
+LAG configurtion on PE1 and PE2:
+
+```
+/configure lag "lag-10" admin-state enable
+/configure lag "lag-10" mode access
+/configure lag "lag-10" lacp mode active
+/configure lag "lag-10" lacp system-id 00:00:00:00:01:02
+/configure lag "lag-10" lacp administrative-key 32768
+/configure lag "lag-10" port 1/1/c11/1 { }
+```
+
+LAG configurtion on PE3 and PE4:
+
+```
+/configure lag "lag-10" admin-state enable
+/configure lag "lag-10" mode access
+/configure lag "lag-10" lacp mode active
+/configure lag "lag-10" lacp system-id 00:00:00:00:03:04
+/configure lag "lag-10" lacp administrative-key 32768
+/configure lag "lag-10" port 1/1/c11/1 { }
+```
+
+BGP configuration on PE1:
+
+```
+/configure router "Base" bgp router-id 10.10.10.1
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.2" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.2" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.3" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.3" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.4" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.4" family evpn true
+```
+
+BGP configuration on PE2:
+
+```
+/configure router "Base" bgp router-id 10.10.10.2
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.1" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.1" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.3" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.3" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.4" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.4" family evpn true
+```
+
+BGP configuration on PE3:
+
+```
+/configure router "Base" bgp router-id 10.10.10.3
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.1" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.1" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.2" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.2" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.4" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.4" family evpn true
+```
+
+BGP configuration on PE4:
+
+```
+/configure router "Base" bgp router-id 10.10.10.4
+/configure router "Base" bgp group "pe" peer-as 64500
+/configure router "Base" bgp neighbor "10.10.10.1" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.1" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.2" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.2" family evpn true
+/configure router "Base" bgp neighbor "10.10.10.3" group "pe"
+/configure router "Base" bgp neighbor "10.10.10.3" family evpn true
+```
+
+Ethernet Segment (ES) configuration on PE1 and PE2:
+
+```
+/configure service system bgp evpn ethernet-segment "ES-1" admin-state enable
+/configure service system bgp evpn ethernet-segment "ES-1" esi 0x00121212121212000101
+/configure service system bgp evpn ethernet-segment "ES-1" multi-homing-mode all-active
+/configure service system bgp evpn ethernet-segment "ES-1" association { lag "lag-10" }
+```
+
+Ethernet Segment (ES) configuration on PE3 and PE4:
+
+```
+/configure service system bgp evpn ethernet-segment "ES-1" admin-state enable
+/configure service system bgp evpn ethernet-segment "ES-1" esi 0x00343434343434000103
+/configure service system bgp evpn ethernet-segment "ES-1" multi-homing-mode all-active
+/configure service system bgp evpn ethernet-segment "ES-1" association { lag "lag-10" }
+```
+
+EVPN-MPLS configuration on PE1, PE2, PE3 and PE4:
+
+```
+/configure service vpls "EVPN-MPLS" admin-state enable
+/configure service vpls "EVPN-MPLS" service-id 70
+/configure service vpls "EVPN-MPLS" customer "1"
+/configure service vpls "EVPN-MPLS" bgp 1 route-distinguisher "64500:70"
+/configure service vpls "EVPN-MPLS" bgp 1 route-target export "target:64500:70"
+/configure service vpls "EVPN-MPLS" bgp 1 route-target import "target:64500:70"
+/configure service vpls "EVPN-MPLS" bgp-evpn evi 70
+/configure service vpls "EVPN-MPLS" bgp-evpn mpls 1 admin-state enable
+/configure service vpls "EVPN-MPLS" bgp-evpn mpls 1 ingress-replication-bum-label true
+/configure service vpls "EVPN-MPLS" bgp-evpn mpls 1 auto-bind-tunnel resolution filter
+/configure service vpls "EVPN-MPLS" bgp-evpn mpls 1 auto-bind-tunnel resolution-filter sr-isis true
+/configure service vpls "EVPN-MPLS" sap lag-10 { }
+```
+
+ACL and QoS policies can be applied under the SAP context.
+
+Refer to the `show commands` section in this guide for commands to check EVPN status.
+
+**Customer Verfiication**
+
+Login to CEB:
+
+```
+docker exec -it ceb bash
+```
+
+Ping CEY from CEB:
+
+```
+└──> ping -c 100 192.168.60.2
+PING 192.168.60.2 (192.168.60.2) 56(84) bytes of data.
+64 bytes from 192.168.60.2: icmp_seq=1 ttl=64 time=9.93 ms
+64 bytes from 192.168.60.2: icmp_seq=2 ttl=64 time=5.25 ms
+64 bytes from 192.168.60.2: icmp_seq=3 ttl=64 time=4.81 ms
+
+--- 192.168.60.2 ping statistics ---
+100 packets transmitted, 100 received, 0% packet loss, time 99142ms
+rtt min/avg/max/mdev = 4.488/5.589/16.327/1.665 ms
+```
 
 # show commands
 
@@ -1155,6 +1422,12 @@ To view a port's statistics:
 
 ```
 show port 1/1/c1/1 statistics
+```
+
+To view LAG status:
+
+```
+show lag lag-10 description
 ```
 
 To view all interfaces:
@@ -1551,6 +1824,47 @@ show router bgp routes vpn-ipv4
 
 ## IES
 
+To view RVPLS service status:
+
+```
+show service id "RVPLS-VLAN500" base
+```
+
+To view RVPLS service details:
+
+```
+show service id "RVPLS-VLAN500" all
+```
+
+To view RVPLS SAP stats:
+
+```
+show service id "RVPLS-VLAN500" sap "1/1/c10/1:500" stats
+```
+
+To view VPLS MAC FDB table:
+
+```
+show service id "RVPLS-VLAN500" fdb detail
+```
+
+To view IES service status:
+
+```
+show service id "IES-500" base
+```
+
+To view IES interface status:
+
+```
+show router interface
+```
+
+To view static route status:
+
+```
+show router static-route
+```
 
 ## EVPN-VPWS
 
@@ -1578,9 +1892,52 @@ To view EVPN Route Type 1 with details:
 show router bgp routes evpn auto-disc detail
 ```
 
-## EVPN-VPLS
+## EVPN-MPLS
 
+To view EVPN service status:
 
+```
+show service id "EVPN-MPLS" base
+```
 
+To view EVPN service details:
 
+```
+show service id "EVPN-MPLS" all
+```
 
+To view EVPN SAP stats:
+
+```
+show service id "EVPN-MPLS" sap "EVPN-MPLS" stats
+```
+
+To view EVPN Route Type 1 with details:
+
+```
+show router bgp routes evpn auto-disc detail
+```
+
+To view EVPN Route Type 2 with details:
+
+```
+show router bgp routes evpn mac detail
+```
+
+To view EVPN Route Type 3 with details:
+
+```
+show router bgp routes evpn incl-mcast detail
+```
+
+To view ethernet segment status:
+
+```
+show service system bgp-evpn ethernet-segment name "ES-1"
+```
+
+To view VPLS MAC FDB table:
+
+```
+show service id "EVPN-MPLS" fdb detail
+```
