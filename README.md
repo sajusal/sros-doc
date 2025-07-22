@@ -16,7 +16,7 @@ The following services are covered in this guide:
 - [VPRN](#VPRN)
 - [IES](#IES)
 - [EVPN-VPWS](#EVPN-VPWS)
-- [EVPN-MPLS](#EVPN-MPLS)
+- [EVPN-MPLS](#EVPN-MPLS-with-Multihoming)
 
 A summary of what this guide provides is shown below.
 
