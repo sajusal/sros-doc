@@ -18,27 +18,27 @@ topology:
       image: ghcr.io/srl-labs/network-multitool
   nodes:
     pe1:
-      #startup-config: configs/pe1-startup.cfg
+      startup-config: configs/pe1-startup.txt
       mgmt-ipv4: 172.10.10.2
       mgmt-ipv6: 2001:172:10:10::2
     pe2:
-      #startup-config: configs/pe2-startup.cfg
+      startup-config: configs/pe2-startup.txt
       mgmt-ipv4: 172.10.10.3
       mgmt-ipv6: 2001:172:10:10::3
     pe3:
-      #startup-config: configs/pe3-startup.cfg
+      startup-config: configs/pe3-startup.txt
       mgmt-ipv4: 172.10.10.4
       mgmt-ipv6: 2001:172:10:10::4
     pe4:
-      #startup-config: configs/pe4-startup.cfg
+      startup-config: configs/pe4-startup.txt
       mgmt-ipv4: 172.10.10.5
       mgmt-ipv6: 2001:172:10:10::5
     p1:
-      #startup-config: configs/p1-startup.cfg
+      startup-config: configs/p1-startup.txt
       mgmt-ipv4: 172.10.10.6
       mgmt-ipv6: 2001:172:10:10::6
     p2:
-      #startup-config: configs/p2-startup.cfg
+      startup-config: configs/p2-startup.txt
       mgmt-ipv4: 172.10.10.7
       mgmt-ipv6: 2001:172:10:10::7
     cea:
