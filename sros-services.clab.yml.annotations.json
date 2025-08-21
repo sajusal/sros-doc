@@ -1,0 +1,127 @@
+{
+  "freeTextAnnotations": [],
+  "groupStyleAnnotations": [],
+  "cloudNodeAnnotations": [],
+  "nodeAnnotations": [
+    {
+      "id": "pe1",
+      "position": {
+        "x": -49,
+        "y": -21
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 49.05084403075397,
+        "lng": 9.804884298950743
+      }
+    },
+    {
+      "id": "pe2",
+      "position": {
+        "x": -49,
+        "y": 49
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 49.42480676495719,
+        "lng": 9.040467624575944
+      }
+    },
+    {
+      "id": "pe3",
+      "position": {
+        "x": 119,
+        "y": -21
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 48.80178514662796,
+        "lng": 9.249075701095334
+      }
+    },
+    {
+      "id": "pe4",
+      "position": {
+        "x": 119,
+        "y": 49
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 49.056929213640466,
+        "lng": 9.283068297521512
+      }
+    },
+    {
+      "id": "p1",
+      "position": {
+        "x": 35,
+        "y": -21
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 48.853467886955535,
+        "lng": 9.697898342664848
+      }
+    },
+    {
+      "id": "p2",
+      "position": {
+        "x": 35,
+        "y": 49
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 49.28965249857615,
+        "lng": 9.721543408502825
+      }
+    },
+    {
+      "id": "cea",
+      "position": {
+        "x": -133,
+        "y": -21
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 48.77357265519235,
+        "lng": 9.329640795711695
+      }
+    },
+    {
+      "id": "ceb",
+      "position": {
+        "x": -133,
+        "y": 49
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 49.17749169361333,
+        "lng": 9.888256382706057
+      }
+    },
+    {
+      "id": "cez",
+      "position": {
+        "x": 203,
+        "y": -21
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 48.92769675198273,
+        "lng": 9.101727821808732
+      }
+    },
+    {
+      "id": "cey",
+      "position": {
+        "x": 203,
+        "y": 49
+      },
+      "icon": "router",
+      "geoCoordinates": {
+        "lat": 49.17793275828849,
+        "lng": 9.679582772800957
+      }
+    }
+  ]
+}
