@@ -32,7 +32,7 @@ We will be using the below topology with 4 Provider Edge (PE) routers, 2 Provide
 
 All configuration examples are shown for PE routers. Refer to the startup config files for configuration on other routers.
 
-![image](/physical-topology.jpg)
+![image](/physical-topology.svg)
 
 IPv4 Addressing:
 

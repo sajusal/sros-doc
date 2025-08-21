@@ -8,37 +8,40 @@ mgmt:
 prefix: ""
 topology:
   defaults:
-    kind: nokia_sros
+    kind: nokia_srsim
   kinds:
-    nokia_sros:
+    nokia_srsim:
       type: sr-1-24d
-      image: vrnetlab/nokia_sros:25.3.R1
-      license: license-sros25.txt
+      image: registry.srlinux.dev/pub/nokia_srsim:25.7.R1
+      license: license-srsim25.txt
+      components:
+        - slot: A
+        - slot: 1
     linux:
       image: ghcr.io/srl-labs/network-multitool
   nodes:
     pe1:
-      startup-config: configs/pe1-startup.txt
+      startup-config: configs/pe1-startup.partial.txt
       mgmt-ipv4: 172.10.10.2
       mgmt-ipv6: 2001:172:10:10::2
     pe2:
-      startup-config: configs/pe2-startup.txt
+      startup-config: configs/pe2-startup.partial.txt
       mgmt-ipv4: 172.10.10.3
       mgmt-ipv6: 2001:172:10:10::3
     pe3:
-      startup-config: configs/pe3-startup.txt
+      startup-config: configs/pe3-startup.partial.txt
       mgmt-ipv4: 172.10.10.4
       mgmt-ipv6: 2001:172:10:10::4
     pe4:
-      startup-config: configs/pe4-startup.txt
+      startup-config: configs/pe4-startup.partial.txt
       mgmt-ipv4: 172.10.10.5
       mgmt-ipv6: 2001:172:10:10::5
     p1:
-      startup-config: configs/p1-startup.txt
+      startup-config: configs/p1-startup.partial.txt
       mgmt-ipv4: 172.10.10.6
       mgmt-ipv6: 2001:172:10:10::6
     p2:
-      startup-config: configs/p2-startup.txt
+      startup-config: configs/p2-startup.partial.txt
       mgmt-ipv4: 172.10.10.7
       mgmt-ipv6: 2001:172:10:10::7
     cea:
@@ -73,6 +76,7 @@ topology:
         - ip addr add 192.168.60.1/24 dev eth1.600
         - ip link set dev eth1.600 address aa:c6:ab:00:06:06
         - ip link set dev eth1.600 up
+      image: ghcr.io/srl-labs/network-multitool
     ceb:
       kind: linux
       mgmt-ipv4: 172.10.10.11
@@ -83,8 +87,9 @@ topology:
         - ip link set eth1 master bond0
         - ip link set eth2 down
         - ip link set eth2 master bond0
-        - ip link set bond0 up        
+        - ip link set bond0 up
         - ip address add 192.168.60.1/24 dev bond0
+      image: ghcr.io/srl-labs/network-multitool
     cez:
       kind: linux
       mgmt-ipv4: 172.10.10.12
@@ -92,31 +97,32 @@ topology:
       exec:
         - ip link add name eth1.100 link eth1 type vlan id 100
         - ip addr add 192.168.10.2/24 dev eth1.100
-        - ip link set dev eth1.100 address ab:c1:ab:00:01:01
+        - ip link set dev eth1.100 address ac:c1:ab:00:01:01
         - ip link set dev eth1.100 up
         - ip link add name eth1.200 link eth1 type vlan id 200
         - ip addr add 192.168.20.2/24 dev eth1.200
-        - ip link set dev eth1.200 address ab:c2:ab:00:02:02
+        - ip link set dev eth1.200 address ac:c2:ab:00:02:02
         - ip link set dev eth1.200 up
         - ip link add name eth1.300 link eth1 type vlan id 300
         - ip addr add 192.168.31.1/24 dev eth1.300
-        - ip link set dev eth1.300 address ab:c3:ab:00:03:03
+        - ip link set dev eth1.300 address ac:c3:ab:00:03:03
         - ip link set dev eth1.300 up
         - ip route add 192.168.30.0/24 via 192.168.31.254
         - ip link add name eth1.400 link eth1 type vlan id 400
         - ip addr add 192.168.41.1/24 dev eth1.400
-        - ip link set dev eth1.400 address ab:c4:ab:00:04:04
+        - ip link set dev eth1.400 address ac:c4:ab:00:04:04
         - ip link set dev eth1.400 up
         - ip route add 192.168.40.0/24 via 192.168.41.254
         - ip link add name eth1.500 link eth1 type vlan id 500
         - ip addr add 192.168.51.1/24 dev eth1.500
-        - ip link set dev eth1.500 address ab:c5:ab:00:05:05
+        - ip link set dev eth1.500 address ac:c5:ab:00:05:05
         - ip link set dev eth1.500 up
         - ip route add 192.168.50.0/24 via 192.168.51.254
         - ip link add name eth1.600 link eth1 type vlan id 600
         - ip addr add 192.168.60.2/24 dev eth1.600
-        - ip link set dev eth1.600 address ab:c6:ab:00:06:06
+        - ip link set dev eth1.600 address ac:c6:ab:00:06:06
         - ip link set dev eth1.600 up
+      image: ghcr.io/srl-labs/network-multitool
     cey:
       kind: linux
       mgmt-ipv4: 172.10.10.13
@@ -127,22 +133,23 @@ topology:
         - ip link set eth1 master bond0
         - ip link set eth2 down
         - ip link set eth2 master bond0
-        - ip link set bond0 up        
+        - ip link set bond0 up
         - ip address add 192.168.60.2/24 dev bond0
+      image: ghcr.io/srl-labs/network-multitool
   links:
     # pe-p links
-    - endpoints: ["pe1:eth1", "p1:eth1"]
-    - endpoints: ["pe2:eth1", "p2:eth1"]
-    - endpoints: ["pe1:eth2", "p2:eth2"]
-    - endpoints: ["pe2:eth2", "p1:eth2"]
-    - endpoints: ["pe3:eth3", "p1:eth3"]
-    - endpoints: ["pe4:eth3", "p2:eth3"]
-    - endpoints: ["pe3:eth4", "p2:eth4"]
-    - endpoints: ["pe4:eth4", "p1:eth4"]
+    - endpoints: [ pe1:1/1/c1/1, p1:1/1/c1/1 ]
+    - endpoints: [ pe2:1/1/c1/1, p2:1/1/c1/1 ]
+    - endpoints: [ pe1:1/1/c2/1, p2:1/1/c2/1 ]
+    - endpoints: [ pe2:1/1/c2/1, p1:1/1/c2/1 ]
+    - endpoints: [ pe3:1/1/c3/1, p1:1/1/c3/1 ]
+    - endpoints: [ pe4:1/1/c3/1, p2:1/1/c3/1 ]
+    - endpoints: [ pe3:1/1/c4/1, p2:1/1/c4/1 ]
+    - endpoints: [ pe4:1/1/c4/1, p1:1/1/c4/1 ]
     # pe-ce links
-    - endpoints: ["cea:eth1","pe1:eth10"]
-    - endpoints: ["cez:eth1","pe3:eth10"]
-    - endpoints: ["ceb:eth1","pe1:eth11"]
-    - endpoints: ["ceb:eth2","pe2:eth11"]
-    - endpoints: ["cey:eth1","pe3:eth11"]
-    - endpoints: ["cey:eth2","pe4:eth11"]
+    - endpoints: [ cea:eth1, pe1:1/1/c10/1 ]
+    - endpoints: [ cez:eth1, pe3:1/1/c10/1 ]
+    - endpoints: [ ceb:eth1, pe1:1/1/c11/1 ]
+    - endpoints: [ ceb:eth2, pe2:1/1/c11/1 ]
+    - endpoints: [ cey:eth1, pe3:1/1/c11/1 ]
+    - endpoints: [ cey:eth2, pe4:1/1/c11/1 ]
